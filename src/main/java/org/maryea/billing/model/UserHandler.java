@@ -151,7 +151,6 @@ public class UserHandler{
 		}else{
 			mainFile = new File(businessName + ".bil");
 		}
-		System.out.println(mainFile.getName());
 		if(!mainFile.exists()){
 			try{
 				mainFile.createNewFile();
@@ -297,10 +296,11 @@ public class UserHandler{
 
 	public static boolean userExists(String username){
 		File file = new File(CREDENTIALS);
-		Scanner scanFile;
 		String line;
 		try{
-			scanFile = new Scanner(file);
+			//TODO: check into closing scanner
+			@SuppressWarnings("resource")
+			Scanner scanFile = new Scanner(file);
 			while(scanFile.hasNextLine()){
 				line = scanFile.nextLine();
 				if(line.contains(username)){
@@ -324,9 +324,12 @@ public class UserHandler{
 				scanLine.useDelimiter("\t");
 				user = scanLine.next();
 				if(user.equals(username)){
+					scanFile.close();
+					scanLine.close();
 					return true;
 				}
 			}
+			scanFile.close();
 		}catch(Exception e){
 			System.out.println("file not found");
 			e.printStackTrace();
@@ -348,11 +351,14 @@ public class UserHandler{
 					knownHash = lineScan.next();
 					if(knownUser.equals(username)){
 						if(Password.validatePassword(password, knownHash)){
+							fileScan.close();
+							lineScan.close();
 							return true;
 						}
 					}
 				}
 			}
+			fileScan.close();
 		}catch(Exception e){
 			System.out.println("Error validating password.");
 			e.printStackTrace();

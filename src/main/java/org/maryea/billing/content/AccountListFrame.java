@@ -10,6 +10,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
 
 public class AccountListFrame extends JInternalFrame implements ComponentListener{
+
+	private static final long serialVersionUID = 7310718746891794846L;
 	private AccountListPanel panel;
 	private AccountViewFrame accountViewFrame;
 	private BillViewFrame billViewFrame;

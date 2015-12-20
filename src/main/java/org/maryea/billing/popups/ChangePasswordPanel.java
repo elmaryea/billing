@@ -7,6 +7,8 @@ import javax.swing.JPasswordField;
 import javax.swing.SpringLayout;
 
 public class ChangePasswordPanel extends JPanel{
+
+	private static final long serialVersionUID = -97985186173476430L;
 	private JLabel orig, pass, pass2;
 	private JPasswordField original, password, password2;
 	private SpringLayout layout;

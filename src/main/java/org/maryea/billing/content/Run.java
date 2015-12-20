@@ -1,8 +1,8 @@
 package org.maryea.billing.content;
 
-import java.io.File;
+/*import java.io.File;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.SwingUtilities;*/
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -20,8 +20,9 @@ public class Run{
     		System.out.println("Look and Feel Not available.");
 		}
 
+		//constructor used to start window
+		@SuppressWarnings("unused")
 		BillingWindow mainWindow;
 		mainWindow = new BillingWindow(System.getProperty("os.name"));
-		//System.out.println(System.getenv("HOME"));
 	}
 }

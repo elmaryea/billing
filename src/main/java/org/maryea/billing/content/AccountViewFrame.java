@@ -8,15 +8,17 @@ import java.awt.event.ComponentListener;
 import javax.swing.JInternalFrame;
 
 public class AccountViewFrame extends JInternalFrame implements ComponentListener{
+
+	private static final long serialVersionUID = -8101112602600094323L;
 	private AccountListFrame accountListFrame;
-	private AccountViewPanel panel;
+	//private AccountViewPanel panel;
 	private BillViewFrame billViewFrame;
 	private Desktop desktop;
 	private OverviewFrame overviewFrame;
 	
 	public AccountViewFrame(Desktop d, MainModel m){
 		desktop = d;
-		panel = new AccountViewPanel(m);
+		//panel = new AccountViewPanel(m);
 	}
 	
 	public void addAccountListFrame(AccountListFrame f){

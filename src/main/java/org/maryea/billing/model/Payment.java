@@ -6,23 +6,23 @@ public class Payment{
   public static final boolean CASH = false;
   public static final boolean CHECK = true;
 
-  private boolean type;
+  //private boolean type;
   private Date date;
   private double amount, resultingBalance;
-  private int checkNumber;
+  //private int checkNumber;
     
   public Payment(Date date, double amount, boolean type, double balance){
     this.date = date;
     this.amount = amount;
-    this.type = type;
+    //this.type = type;
     resultingBalance = balance;
   }
 
   public Payment(Date date, double amount, boolean type, double balance, int checkNumber){
     this.date = date;
     this.amount = amount;
-    this.type = type;;
-    this.checkNumber = checkNumber;
+    //this.type = type;;
+    //this.checkNumber = checkNumber;
     resultingBalance = balance;
   }
 
@@ -39,7 +39,7 @@ public class Payment{
   }
 
   public void setPaymentType(boolean type){
-    this.type = type;
+    //this.type = type;
   }
 
   public double getAmount(){

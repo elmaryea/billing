@@ -14,10 +14,12 @@ import java.awt.Dimension;
 import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.pushingpixels.flamingo.api.ribbon.JRibbon;
+//import org.pushingpixels.flamingo.api.ribbon.JRibbon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 public class BillingWindow extends JRibbonFrame{
+
+	private static final long serialVersionUID = -6431594020696819995L;
 	private ChangePasswordBox changePasswordBox;
 	private CreateAccountBox createAccountBox;
 	private CreateUserBox createUserBox;
@@ -35,6 +37,7 @@ public class BillingWindow extends JRibbonFrame{
 		super("Billing Program");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setMinimumSize(new Dimension(300, 300));
 
 		toFront();
 

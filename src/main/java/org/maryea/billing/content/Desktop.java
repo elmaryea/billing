@@ -7,6 +7,8 @@ import javax.swing.JDesktopPane;
 import javax.swing.SwingUtilities;
 
 public class Desktop extends JDesktopPane{
+
+	private static final long serialVersionUID = 7128494658202124509L;
 	private AccountListFrame accountListFrame;
 	private AccountViewFrame accountViewFrame;
 	private BillViewFrame billViewFrame;

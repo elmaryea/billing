@@ -22,7 +22,7 @@ public class AccountHandler{
 		Payment paymentToAdd;
 		ResultSet accountResults, childResults, payerResults, paymentResults;
 		Statement duplicateStatement;
-		String accountName, firstName, lastName, payerName, command;
+		String accountName, firstName, lastName, command; //payerName
 
 		try{
 			duplicateStatement = statement.getConnection().createStatement();			

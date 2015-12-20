@@ -10,10 +10,12 @@ import javax.swing.SpringLayout;
 import javax.swing.JTextField;
 
 public class CreateAccountPanel extends JPanel{
+
+	private static final long serialVersionUID = -2725018565094897806L;
 	private JLabel first, last;
 	private JTextField firstName, lastName;
 	private SpringLayout layout;
-	private BillingWindow billingWindow;
+	//private BillingWindow billingWindow;
 
 	public CreateAccountPanel(BillingWindow b){
 		first = new JLabel("First name:");
@@ -21,7 +23,7 @@ public class CreateAccountPanel extends JPanel{
 		firstName = new JTextField(20);
 		lastName = new JTextField(20);
 		layout = new SpringLayout();
-		billingWindow = b;
+		//billingWindow = b;
 
 		setLayout(layout);
 		setPreferredSize(new Dimension(400, 300));

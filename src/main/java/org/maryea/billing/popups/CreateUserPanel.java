@@ -6,11 +6,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+/*import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;*/
 import java.util.Arrays;
 
 public class CreateUserPanel extends JPanel{
+
+	private static final long serialVersionUID = -1343258035339235167L;
 	private JLabel instruct, user, pass, pass2, first, last, business, email;
 	private JTextField username, firstName, lastName, businessName, emailAddress;
 	private JPasswordField password, password2;

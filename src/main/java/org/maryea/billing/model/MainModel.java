@@ -18,13 +18,13 @@ public class MainModel{
 
 	private Account currentAccount;
 	private AccountListPanel accountListPanel;
-	private AccountViewPanel accountViewPanel;
+	//private AccountViewPanel accountViewPanel;
 	private BillingWindow billingWindow;
-	private BillViewPanel billViewPanel;
+	//private BillViewPanel billViewPanel;
 	private Child currentChild;
 	private Connection rootConnection, userConnection;
 	private File currentFile;
-	private OverviewPanel overviewPanel;
+	//private OverviewPanel overviewPanel;
 	private Payer currentPayer;
 	private Statement rootStatement, userStatement;
 	private String osName;
@@ -38,7 +38,7 @@ public class MainModel{
 		accounts = new Vector<Account>();
 		users = new Vector<User>();
 		try{
-			rootConnection = DriverManager.getConnection("jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com", "root", "16soCCer!!");
+			rootConnection = DriverManager.getConnection("jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com", "root", "billing");
 			rootStatement = rootConnection.createStatement();
 		}catch(Exception e){
 			System.out.println("There was an issue connecting to the root SQL account.");
@@ -62,6 +62,8 @@ public class MainModel{
 	public boolean checkFilePass(File toOpen){
 		File checkFile = new File("src/main/resources/" + currentUser.getUsername() + ".cred");
 		try{
+			//TODO: look into closing the following scanner
+			@SuppressWarnings("resource")
 			Scanner fileScan = new Scanner(checkFile);
 			String check;
 			while(fileScan.hasNextLine()){
@@ -81,6 +83,7 @@ public class MainModel{
 			c.setEnabled(false);
 			c.setVisible(false);
 		}
+		billingWindow.getRibbon().disableButton("New Account");
 		billingWindow.getRibbon().disableButton("Add User Privilege");
 		currentFile = null;
 	}
@@ -142,13 +145,12 @@ public class MainModel{
 		currentAccount = null;
 		accounts = null;
 	}
-	public void openFile(File file){
-		currentFile = file;
+	public void openWorkingDB(String name){
 		try{
-			Scanner scan = new Scanner(file);
-			String name = scan.nextLine();
-			String query = "use " + name;
+			String query = "USE " + name;
 			userStatement.execute(query);
+			query = "UPDATE billingAdmin.users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() +"'";
+			rootStatement.execute(query);
 
 			accounts = AccountHandler.loadAccounts(userStatement);
 			accountListPanel.loadTable(accounts);
@@ -157,6 +159,19 @@ public class MainModel{
 			billingWindow.getRibbon().enableButton("New Account");
 		}catch(Exception e){
 			System.out.println("There was an error connecting to the file database.");
+			e.printStackTrace();
+		}
+	}
+	
+	public void openFile(File file){
+		currentFile = file;
+		try{
+			Scanner scan = new Scanner(file);
+			String name = scan.nextLine();
+			scan.close();
+			openWorkingDB(name);
+		}catch(Exception e){
+			System.out.println("There was an error opening the file.");
 			e.printStackTrace();
 		}
 	}
@@ -179,6 +194,7 @@ public class MainModel{
 					}
 				}
 			}
+			fileScan.close();
 		}catch(Exception e){
 			System.out.println("Other exception.");
 			e.printStackTrace();
@@ -218,10 +234,10 @@ public class MainModel{
 		accountListPanel = a;
 	}
 	public void setAccountViewPanel(AccountViewPanel a){
-		accountViewPanel = a;
+		//accountViewPanel = a;
 	}
 	public void setBillViewPanel(BillViewPanel b){
-		billViewPanel = b;
+		//billViewPanel = b;
 	}
 	public void setCurrentUser(User user, String hash){
 		currentUser = user;
@@ -234,6 +250,6 @@ public class MainModel{
 		}
 	}
 	public void setOverviewPanel(OverviewPanel o){
-		overviewPanel = o;
+		//overviewPanel = o;
 	}
 }

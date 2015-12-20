@@ -3,6 +3,8 @@ package org.maryea.billing.content;
 import org.maryea.billing.model.UserHandler;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,7 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 public class LoginScreen extends JPanel{
-	private final String CREDENTIALS_PATH = "src/com/resources/credentials.pass";
+
+	private static final long serialVersionUID = -3008179859062274369L;
 	private BillingWindow billingWindow;
 	private JLabel username, password;
 	private JButton createAccount, login, forgotPassword;
@@ -43,9 +46,23 @@ public class LoginScreen extends JPanel{
 		login.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)	{
 				String user = loginName.getText();
-				char[] input = passwordField.getPassword();
-				if(UserHandler.verifyPassword(passwordField.getPassword(), loginName.getText())){
+				char[] password = passwordField.getPassword();
+				if(UserHandler.verifyPassword(password, user)){
 					validLogin(user);
+					try{
+						String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
+						ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
+						if(results.next()){
+							String dbName = results.getString("lastProgramOpen");
+							if(!results.wasNull()){
+								System.out.println(dbName);
+								billingWindow.getModel().openWorkingDB(dbName);
+							}
+						}
+					}catch(SQLException s){
+						System.out.println("There was an error getting the most recent program.");
+						s.printStackTrace();
+					}
 				}else{
 					JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
 				}
@@ -65,12 +82,58 @@ public class LoginScreen extends JPanel{
 			}
 		});
 
+		loginName.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				String user = loginName.getText();
+				char[] input = passwordField.getPassword();
+				if(user.equals("")){
+					JOptionPane.showMessageDialog(billingWindow, "You must enter a username.", "", JOptionPane.ERROR_MESSAGE);
+				}else if(input.length == 0){
+					JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
+				}else if(UserHandler.verifyPassword(input, user)){
+					validLogin(user);
+					try{
+						String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
+						ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
+						if(results.next()){
+							String dbName = results.getString("lastProgramOpen");
+							if(!results.wasNull()){
+								billingWindow.getModel().openWorkingDB(dbName);
+							}
+						}
+					}catch(SQLException s){
+						System.out.println("There was an error getting the most recent program.");
+						s.printStackTrace();
+					}
+				}else{
+					JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		
 		passwordField.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				String user = loginName.getText();
 				char[] input = passwordField.getPassword();
-				if(UserHandler.verifyPassword(passwordField.getPassword(), loginName.getText())){
+				if(user.equals("")){
+					JOptionPane.showMessageDialog(billingWindow, "You must enter a username.", "", JOptionPane.ERROR_MESSAGE);
+				}else if(input.length == 0){
+					JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
+				}else if(UserHandler.verifyPassword(input, user)){
 					validLogin(user);
+					try{
+						String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
+						ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
+						if(results.next()){
+							String dbName = results.getString("lastProgramOpen");
+							if(!results.wasNull()){
+								billingWindow.getModel().openWorkingDB(dbName);
+							}
+						}
+					}catch(SQLException s){
+						System.out.println("There was an error getting the most recent program.");
+						s.printStackTrace();
+					}
 				}else{
 					JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
 				}

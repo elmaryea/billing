@@ -5,7 +5,7 @@ import org.maryea.billing.model.Child;
 import org.maryea.billing.model.MainModel;
 import org.maryea.billing.model.Payer;
 import java.awt.Component;
-import java.text.NumberFormat;
+//import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.JTable;
@@ -15,9 +15,13 @@ import javax.swing.table.TableColumn;
 
 public class AccountListPanel extends JTable{
 
+	private static final long serialVersionUID = -4106551294292452278L;
+
 	private class TableModel extends DefaultTableModel{
 
-		public TableModel(Vector data, Vector columnNames){
+		private static final long serialVersionUID = 4649160851643808463L;
+
+		public TableModel(Vector<Object> data, Vector<String> columnNames){
 			super(data, columnNames);
 		}
 
@@ -26,7 +30,7 @@ public class AccountListPanel extends JTable{
 		}
 	}
 
-	private final NumberFormat CURRENCY = NumberFormat.getCurrencyInstance();
+	//private final NumberFormat CURRENCY = NumberFormat.getCurrencyInstance();
 	private final Vector<String> COLUMN_NAMES = new Vector<String>(Arrays.asList("Account", "Children", "Payers", "Balance"));
 
 	private TableModel tableModel;
@@ -50,8 +54,8 @@ public class AccountListPanel extends JTable{
 		payers = new Vector<JTable>();
 		balance = new Vector<Double>();
 
-		Vector<Vector> payer = new Vector<Vector>();
-		Vector<Vector> child = new Vector<Vector>();
+		Vector<Vector<String>> payer = new Vector<Vector<String>>();
+		Vector<Vector<String>> child = new Vector<Vector<String>>();
 		Vector<Object> row = new Vector<Object>();
 		JTable childTable, payerTable;
 
@@ -84,6 +88,9 @@ public class AccountListPanel extends JTable{
 	}
 
 	private class CustomTableCellRenderer extends DefaultTableCellRenderer{
+
+		private static final long serialVersionUID = -516916689759819600L;
+
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
 			return this;

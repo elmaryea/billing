@@ -7,6 +7,8 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 public class ResetPasswordPanel extends JPanel{
+
+	private static final long serialVersionUID = -7882528666853586857L;
 	private JLabel user;
 	private JTextField username;
 	private SpringLayout layout;

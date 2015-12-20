@@ -4,17 +4,17 @@ import org.maryea.billing.content.BillingWindow;
 import org.maryea.billing.model.Password;
 import org.maryea.billing.model.UserHandler;
 import java.io.File;
-import java.io.FileWriter;
+/*import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.IOException;*/
 import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 
 public class CreateUserBox{
 	private CreateUserPanel panel;
-	private int choice;
+	//private int choice;
 
 	public CreateUserBox(BillingWindow billingWindow){
 		createWindow(billingWindow);
@@ -40,7 +40,6 @@ public class CreateUserBox{
 					UserHandler.createAccount(panel.getUsername(), hash);
 					String db = UserHandler.createSQLEntry(billingWindow.getModel().getRootStatement(), panel.getUsername(), hash, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
 					UserHandler.createCheckFile(panel.getUsername(), db);
-					System.out.println(db);
 					if(!db.equals("")){
 						UserHandler.createMainFile(db, billingWindow.getModel().getOS());
 					}
@@ -56,9 +55,6 @@ public class CreateUserBox{
 							dbName = new File(panel.getBusinessName() + ".bil");
 						}
 						billingWindow.getModel().openFile(dbName);
-						billingWindow.getDesktop().placeComponents();
-						billingWindow.getRibbon().enableButton("Add User Privilege");
-						billingWindow.getRibbon().enableButton("New Account");
 					}
 				}catch(Exception e){
 					e.printStackTrace();

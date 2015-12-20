@@ -11,8 +11,8 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.icon.EmptyResizableIcon;
-import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
-import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
+//import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
+//import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
@@ -28,6 +28,7 @@ public class Ribbon extends JRibbon{
 	//TODO: create ribbonband for invoice and place it under account. It is only available
 	//if an account or a payment is selected.
 
+	private static final long serialVersionUID = -1500137129130554395L;
 	RibbonTask accountTask, userTask;
 	ArrayList<JCommandButton> commandButtons;
 	JCommandButton addUserPrivilegeBtn, changePasswordBtn, newAccountBtn, newPaymentBtn, invoiceBtn, nextPaymentBtn, newBusinessBtn, logoutBtn, deleteAccountBtn;
@@ -86,7 +87,7 @@ public class Ribbon extends JRibbon{
 		newAccountBtn = new JCommandButton("New Account", null);
 		newAccountBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				billingWindow.viewCreateAccountBox();
+				//billingWindow.viewCreateAccountBox();
 			}
 		});
 		commandButtons.add(newAccountBtn);
@@ -130,6 +131,7 @@ public class Ribbon extends JRibbon{
 		logoutBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				billingWindow.getModel().logout();
+				billingWindow.getLoginScreen().clearScreen();
 				billingWindow.getLoginScreen().setEnabled(true);
 				billingWindow.getLoginScreen().setVisible(true);
 				billingWindow.getDesktop().setEnabled(false);
@@ -150,6 +152,7 @@ public class Ribbon extends JRibbon{
 				try{
 					Scanner scanFile = new Scanner(currentFile);
 					String dbName =scanFile.nextLine();
+					scanFile.close();
 					UserHandler.addUserPrivilege(dbName, username, billingWindow.getModel().getRootStatement());
 				}catch(Exception e){
 					System.out.println("There was an issue getting the database name from the current file.");
@@ -162,7 +165,7 @@ public class Ribbon extends JRibbon{
 		changePasswordBtn = new JCommandButton("Change Password", null);
 		changePasswordBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				billingWindow.viewChangePasswordBox();
+				//billingWindow.viewChangePasswordBox();
 			}
 		});
 		commandButtons.add(changePasswordBtn);
@@ -173,7 +176,7 @@ public class Ribbon extends JRibbon{
 				if(billingWindow.getModel().saveOption()){
 					billingWindow.getModel().closeFile();
 				}
-				billingWindow.viewNewFileBox();
+				//billingWindow.viewNewFileBox();
 			}
 		});
 		commandButtons.add(newBusinessBtn);
@@ -255,14 +258,14 @@ public class Ribbon extends JRibbon{
 			billingWindow.viewOpenScreen();
 		}
 	}
-	private class SaveAs implements ActionListener{
+	/*private class SaveAs implements ActionListener{
 		public SaveAs(){
 			super();
 		}
 		public void actionPerformed(ActionEvent e){
 			billingWindow.viewSaveScreen(billingWindow.getModel().getCurrentFile().getName());
 		}
-	}
+	}*/
 	private class CloseFile implements ActionListener{
 		public CloseFile(){
 			super();

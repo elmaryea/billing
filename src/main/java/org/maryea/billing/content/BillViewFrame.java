@@ -1,22 +1,24 @@
 package org.maryea.billing.content;
 
 import org.maryea.billing.model.MainModel;
-import java.awt.Dimension;
+//import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import javax.swing.JInternalFrame;
 
 public class BillViewFrame extends JInternalFrame implements ComponentListener{
+	
+	private static final long serialVersionUID = -904065376283419817L;
 	private AccountListFrame accountListFrame;
 	private AccountViewFrame accountViewFrame;
 	private Desktop desktop;
-	private BillViewPanel panel;
+	//private BillViewPanel panel;
 	private OverviewFrame overviewFrame;
 	
 	public BillViewFrame(Desktop d, MainModel m){
 		desktop = d;
-		panel = new BillViewPanel(m);
+		//panel = new BillViewPanel(m);
 	}
 	
 	public void addAccountListFrame(AccountListFrame f){
