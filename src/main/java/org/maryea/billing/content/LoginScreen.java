@@ -45,27 +45,7 @@ public class LoginScreen extends JPanel{
 		//ActionListener for the Login button
 		login.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)	{
-				String user = loginName.getText();
-				char[] password = passwordField.getPassword();
-				if(UserHandler.verifyPassword(password, user)){
-					validLogin(user);
-					try{
-						String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
-						ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
-						if(results.next()){
-							String dbName = results.getString("lastProgramOpen");
-							if(!results.wasNull()){
-								System.out.println(dbName);
-								billingWindow.getModel().openWorkingDB(dbName);
-							}
-						}
-					}catch(SQLException s){
-						System.out.println("There was an error getting the most recent program.");
-						s.printStackTrace();
-					}
-				}else{
-					JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
-				}
+				checkLoginAction();
 			}
 		});
 
@@ -84,59 +64,13 @@ public class LoginScreen extends JPanel{
 
 		loginName.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				String user = loginName.getText();
-				char[] input = passwordField.getPassword();
-				if(user.equals("")){
-					JOptionPane.showMessageDialog(billingWindow, "You must enter a username.", "", JOptionPane.ERROR_MESSAGE);
-				}else if(input.length == 0){
-					JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
-				}else if(UserHandler.verifyPassword(input, user)){
-					validLogin(user);
-					try{
-						String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
-						ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
-						if(results.next()){
-							String dbName = results.getString("lastProgramOpen");
-							if(!results.wasNull()){
-								billingWindow.getModel().openWorkingDB(dbName);
-							}
-						}
-					}catch(SQLException s){
-						System.out.println("There was an error getting the most recent program.");
-						s.printStackTrace();
-					}
-				}else{
-					JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
-				}
+				checkLoginAction();
 			}
 		});
 		
 		passwordField.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				String user = loginName.getText();
-				char[] input = passwordField.getPassword();
-				if(user.equals("")){
-					JOptionPane.showMessageDialog(billingWindow, "You must enter a username.", "", JOptionPane.ERROR_MESSAGE);
-				}else if(input.length == 0){
-					JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
-				}else if(UserHandler.verifyPassword(input, user)){
-					validLogin(user);
-					try{
-						String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
-						ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
-						if(results.next()){
-							String dbName = results.getString("lastProgramOpen");
-							if(!results.wasNull()){
-								billingWindow.getModel().openWorkingDB(dbName);
-							}
-						}
-					}catch(SQLException s){
-						System.out.println("There was an error getting the most recent program.");
-						s.printStackTrace();
-					}
-				}else{
-					JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
-				}
+				checkLoginAction();
 			}
 		});
 
@@ -153,6 +87,33 @@ public class LoginScreen extends JPanel{
 		setLayoutPattern();
 	}
 
+	public void checkLoginAction(){
+		String user = loginName.getText();
+		char[] input = passwordField.getPassword();
+		if(user.equals("")){
+			JOptionPane.showMessageDialog(billingWindow, "You must enter a username.", "", JOptionPane.ERROR_MESSAGE);
+		}else if(input.length == 0){
+			JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
+		}else if(UserHandler.verifyPassword(input, user)){
+			validLogin(user);
+			try{
+				String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
+				ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
+				if(results.next()){
+					String dbName = results.getString("lastProgramOpen");
+					if(!results.wasNull()){
+						billingWindow.getModel().openWorkingDB(dbName);
+					}
+				}
+			}catch(SQLException s){
+				System.out.println("There was an error getting the most recent program.");
+				s.printStackTrace();
+			}
+		}else{
+			JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	public void clearScreen(){
 		loginName.setText("");
 		passwordField.setText("");

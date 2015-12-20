@@ -5,6 +5,9 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+
+import org.maryea.billing.model.RequestFocusListener;
+
 import java.awt.Dimension;
 /*import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;*/
@@ -58,6 +61,7 @@ public class CreateUserPanel extends JPanel{
 		add(password2);
 
 		layoutForm();
+		
 	}
 
 	private void layoutForm(){

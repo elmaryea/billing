@@ -27,14 +27,14 @@ public class AccountHandler{
 		try{
 			duplicateStatement = statement.getConnection().createStatement();			
 
-			command = "Select * from Accounts";
+			command = "SELECT * FROM Accounts";
 			accountResults = statement.executeQuery(command);
 			while(accountResults.next()){
 				accountName = accountResults.getString("Name");
 				balance = accountResults.getDouble("Balance");
 				accountToAdd = new Account(accountName, balance);
 
-				command = "Select * from Children where Account='" + accountName + "'";
+				command = "SELECT * FROM Children WHERE Account='" + accountName + "'";
 				childResults =  duplicateStatement.executeQuery(command);
 				while(childResults.next()){
 					firstName = childResults.getString("FirstName");
@@ -44,7 +44,7 @@ public class AccountHandler{
 					children.add(childToAdd);
 				}
 
-				command = "Select * from Payers where Account='" + accountName + "'";
+				command = "SELECT * FROM Payers WHERE Account='" + accountName + "'";
 				payerResults = duplicateStatement.executeQuery(command);
 				while(payerResults.next()){
 					firstName = payerResults.getString("FirstName");
@@ -53,7 +53,7 @@ public class AccountHandler{
 					payers.add(payerToAdd);
 				}
 				
-				command = "Select * from Transactions where Account='" + accountName + "'";
+				command = "SELECT * FROM Transactions WHERE Account='" + accountName + "'";
 				paymentResults = duplicateStatement.executeQuery(command);
 				while(paymentResults.next()){
 					date = paymentResults.getDate("Date");

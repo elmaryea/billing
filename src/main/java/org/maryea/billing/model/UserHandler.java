@@ -29,7 +29,7 @@ public class UserHandler{
 	public static void addUserPrivilege(String fileName, String username, Statement statement){
 		try{
 			createCheckFile(username, fileName);
-			String command = "grant select,insert,delete,drop on " + fileName + ".* to '" + username + "'";
+			String command = "GRANT SELECT,INSERT,DELETE,DROP,ALTER,UPDATE ON " + fileName + ".* TO '" + username + "'";
 			statement.execute(command);
 		}catch(Exception e){
 			System.out.println("There was an issue adding to a users privileges.");
@@ -38,7 +38,7 @@ public class UserHandler{
 	}
 	public static void changeSQLPassword(Statement statement, String username, String hash){
 		try{
-			String command = "set password for '" + username + "' = password('" + hash + "')";
+			String command = "SET PASSWORD FOR '" + username + "' = password('" + hash + "')";
 			statement.execute(command);
 		}catch(Exception e){
 			System.out.println("There was an error setting/change the sql password for " + username);
@@ -116,7 +116,7 @@ public class UserHandler{
 	public static String createDatabase(Statement statement, String username, String dbName){
 		String db = newDBName(statement, dbName);
 		try{
-			String command = "show databases";
+			String command = "SHOW DATABASES";
 			ResultSet results = statement.executeQuery(command);
 			boolean exists = false;
 			while(results.next()){
@@ -125,24 +125,72 @@ public class UserHandler{
 				}
 			}
 			if(exists == false){
-				command = "create database " + db;
+				command = "CREATE DATABASE " + db;
 				statement.execute(command);
-				command = "grant create,select,insert,delete,drop on " + db + ".* to '" + username + "'";
+				command = "GRANT CREATE,SELECT,INSERT,DELETE,DROP,ALTER,UPDATE on " + db + ".* to '" + username + "'";
 				statement.execute(command);
-				command = "use " + db;
+				command = "USE " + db;
 				statement.execute(command);
-				command = "create table Accounts (name varchar(20))";
+				command = "CREATE TABLE Accounts (Account_ID INT NOT NULL AUTO_INCREMENT, "
+						+ "FirstName1 VARCHAR(30) NOT NULL, "
+						+ "LastName1 VARCHAR(30) NOT NULL, "
+						+ "FirstName2 VARCHAR(30), "
+						+ "LastName2 VARCHAR(30), "
+						+ "Address VARCHAR(30) NOT NULL, "
+						+ "City VARCHAR(30) NOT NULL, "
+						+ "State VARCHAR(30) NOT NULL, "
+						+ "ZipCode VARCHAR(5) NOT NULL, "
+						+ "HomePhone VARCHAR(11), "
+						+ "CellPhone VARCHAR(11), "
+						+ "Balance DECIMAL(6, 2) NOT NULL, "
+						+ "PRIMARY KEY (Account_ID))";
+				statement.execute(command);
+				command = "CREATE TABLE Children (Child_ID INT NOT NULL AUTO_INCREMENT, "
+						+ "FirstName VARCHAR(30) NOT NULL, "
+						+ "LastName VARCHAR(30) NOT NULL, "
+						+ "Balance DECIMAL(6, 2) NOT NULL, "
+						+ "Account_ID INT NOT NULL, "
+						+ "PRIMARY KEY (Child_ID), "
+						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID))";
+				statement.execute(command);
+				command = "CREATE TABLE Payers (Payer_ID INT NOT NULL AUTO_INCREMENT, "
+						+ "FirstName VARCHAR(30) NOT NULL, "
+						+ "LastName VARCHAR(30) NOT NULL, "
+						+ "Address VARCHAR(30) NOT NULL, "
+						+ "City VARCHAR(30) NOT NULL, "
+						+ "State VARCHAR(30) NOT NULL, "
+						+ "ZipCode VARCHAR(5) NOT NULL, "
+						+ "HomePhone VARCHAR(11), "
+						+ "CellPhone VARCHAR(11), "
+						+ "Account_ID int, "
+						+ "PRIMARY KEY (Payer_ID), "
+						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID))";
+				statement.execute(command);
+				command = "CREATE TABLE Payments (Payment_ID INT NOT NULL AUTO_INCREMENT, "
+						+ "DatePaid DATE NOT NULL, "
+						+ "AmountPaid DECIMAL(6, 2) NOT NULL, "
+						+ "Balance DECIMAL(6, 2) NOT NULL, "
+						+ "Cash TINYINT NOT NULL, "
+						+ "CheckNumber INT, "
+						+ "Account_ID INT NOT NULL, "
+						+ "Payer_ID INT NOT NULL, "
+						+ "Payment_ID_FKRef INT, "
+						+ "Child_ID INT, "
+						+ "PRIMARY KEY (Payment_ID), "
+						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID), "
+						+ "FOREIGN KEY (Payer_ID) REFERENCES Payers(Payer_ID), "
+						+ "FOREIGN KEY (Payment_ID_FKRef) REFERENCES Payments(Payment_ID), "
+						+ "FOREIGN KEY (Child_ID) REFERENCES Children(Child_ID))";
 				statement.execute(command);
 			}
 		}catch(Exception e){
-			System.out.println("Error creating Database.");
+			System.out.println("Error creating Database.\n");
 			e.printStackTrace();
 		}
 		return db;
 	}
 
 	public static void createMainFile(String businessName, String os){
-		//TODO: Check OS and create file based on OS;
 		File mainFile;
 		if(os.indexOf("win") >= 0){
 			mainFile = new File(System.getenv("HOMEPATH") + "/" + businessName + ".bil");
@@ -172,17 +220,15 @@ public class UserHandler{
 	public static String createSQLEntry(Statement statement, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
 		String db = "";
 		try{
-			String command = "create user '" + username + "' identified by 'temp'";
+			String command = "CREATE USER '" + username + "' identified by 'temp'";
 			statement.execute(command);
 			changeSQLPassword(statement, username, hash);
 			if(!businessName.equals("")){
 				db = newDBName(statement, businessName.replaceAll("\\s", ""));
 				createDatabase(statement, username, db);
 			}
-			command = "use billingAdmin";
-			statement.execute(command);
 			Calendar c = Calendar.getInstance();
-			command = "insert into users (username, firstName, lastName, businessName, email, lastPassChange) values ('" + 
+			command = "INSERT INTO billingAdmin.users (username, firstName, lastName, businessName, email, lastPassChange) values ('" + 
 				username + "', '" + firstName + "', '" + lastName + "', '" + businessName + "', '" + emailAddress + "', '" + 
 				c.get(Calendar.YEAR)  +"-" + (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DAY_OF_MONTH) +"')";
 			statement.execute(command);
@@ -196,7 +242,7 @@ public class UserHandler{
 	public static boolean dbExists(Statement statement, String testName){
 		boolean ret = false;
 		try{
-			String query = "select businessName from billingAdmin.users where businessName = '" + testName + "'";
+			String query = "SELECT businessName FROM billingAdmin.users WHERE businessName = '" + testName + "'";
 			ResultSet result = statement.executeQuery(query);
 			ret = result.next();
 		}catch(Exception e){
@@ -209,7 +255,7 @@ public class UserHandler{
 	public static Vector<User> loadUsers(Statement statement){
 		Vector<User> users = new Vector<User>();
 		try{
-			String query = "select * from billingAdmin.users";
+			String query = "SELECT * FROM billingAdmin.users";
 			ResultSet result = statement.executeQuery(query);
 			String username, firstName, lastName, businessName, email;
 			Date lastPassChange;
@@ -250,7 +296,7 @@ public class UserHandler{
 			e.printStackTrace();
 		}
 		try{
-			String query = "select email from billingAdmin.users where username = '" + username + "'";
+			String query = "SELECT email FROM billingAdmin.users WHERE username = '" + username + "'";
 			ResultSet result = statement.executeQuery(query);
 			result.next();
 			sendResetEmail(result.getString("email"), tempPassword);

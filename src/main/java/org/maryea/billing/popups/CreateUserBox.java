@@ -2,6 +2,7 @@ package org.maryea.billing.popups;
 
 import org.maryea.billing.content.BillingWindow;
 import org.maryea.billing.model.Password;
+import org.maryea.billing.model.RequestFocusListener;
 import org.maryea.billing.model.UserHandler;
 import java.io.File;
 /*import java.io.FileWriter;
@@ -14,26 +15,49 @@ import javax.swing.JOptionPane;
 
 public class CreateUserBox{
 	private CreateUserPanel panel;
-	//private int choice;
+	private BillingWindow billingWindow;
 
-	public CreateUserBox(BillingWindow billingWindow){
-		createWindow(billingWindow);
+	public CreateUserBox(BillingWindow bw){
+		billingWindow = bw;
+		createWindow();
 	}
 
-	public void createWindow(BillingWindow billingWindow){
+	public void createWindow(){
 		panel = new CreateUserPanel();
+		internalWindowCall();
+	}
+
+	public void createWindow(String user, String first, String last, String business, String email){
+		panel = new CreateUserPanel();
+		panel.setUsername(user);
+		panel.setFirstName(first);
+		panel.setLastName(last);
+		panel.setBusinessName(business);
+		panel.setEmailAddress(email);
+		internalWindowCall();
+	}
+
+	public void createWindow(String first, String last, String business, String email){
+		panel = new CreateUserPanel();
+		panel.setFirstName(first);
+		panel.setLastName(last);
+		panel.setBusinessName(business);
+		panel.setEmailAddress(email);
+		internalWindowCall();
+	}
+	private void internalWindowCall(){
 		Object[] options = {"Cancel", "Continue"};
-		int choice = JOptionPane.showOptionDialog(billingWindow, panel, "Create Account", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+		int choice = JOptionPane.showOptionDialog(billingWindow, panel, "Create Account", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
 		if(choice == 1){
 			if(!panel.checkAll()){
 				JOptionPane.showMessageDialog(billingWindow, "Some information is missing.");
-				createWindow(billingWindow, panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
+				createWindow(panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
 			}else if(!Arrays.equals(panel.getPassword(), panel.getRedundant())){
 				JOptionPane.showMessageDialog(billingWindow, "Your passwords didn't match.\nPlease try again.");
-				createWindow(billingWindow, panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
+				createWindow(panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
 			}else if(UserHandler.usernameExists(panel.getUsername())){
 				JOptionPane.showMessageDialog(billingWindow, "That username alreay exists.");
-				createWindow(billingWindow, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
+				createWindow(panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
 			}else{
 				try{
 					String hash = Password.createHash(panel.getPassword());
@@ -55,91 +79,6 @@ public class CreateUserBox{
 							dbName = new File(panel.getBusinessName() + ".bil");
 						}
 						billingWindow.getModel().openFile(dbName);
-					}
-				}catch(Exception e){
-					e.printStackTrace();
-					System.out.println("There was an issue creating the account.");
-				}
-			}
-		}
-	}
-
-	public void createWindow(BillingWindow billingWindow, String user, String first, String last, String business, String email){
-		panel = new CreateUserPanel();
-		panel.setUsername(user);
-		panel.setFirstName(first);
-		panel.setLastName(last);
-		panel.setBusinessName(business);
-		panel.setEmailAddress(email);
-		Object[] options = {"Cancel", "Continue"};
-		int choice = JOptionPane.showOptionDialog(billingWindow, panel, "Create Account", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
-		if(choice == 1){
-			if(!panel.checkAll()){
-				JOptionPane.showMessageDialog(billingWindow, "Some information is missing.");
-				createWindow(billingWindow, panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-			}else if(!Arrays.equals(panel.getPassword(), panel.getRedundant())){
-				JOptionPane.showMessageDialog(billingWindow, "Your passwords didn't match.\nPlease try again.");
-				createWindow(billingWindow, panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-			}else if(UserHandler.usernameExists(panel.getUsername())){
-				JOptionPane.showMessageDialog(billingWindow, "That username alreay exists.");
-				createWindow(billingWindow, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-			}else{
-				try{
-					String hash = Password.createHash(panel.getPassword());
-					UserHandler.createAccount(panel.getUsername(), hash);
-					String db = UserHandler.createSQLEntry(billingWindow.getModel().getRootStatement(), panel.getUsername(), hash, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-					UserHandler.createCheckFile(panel.getUsername(), db);
-					if(!db.equals("")){
-						UserHandler.createMainFile(db, billingWindow.getModel().getOS());
-					}
-					billingWindow.getLoginScreen().validLogin(panel.getUsername());
-					if(!db.equals("")){
-						billingWindow.getModel().openFile(new File(db + ".bil"));
-						billingWindow.getDesktop().placeComponents();
-						billingWindow.getRibbon().enableButton("Add User Privilege");
-						billingWindow.getRibbon().enableButton("New Account");
-					}
-				}catch(Exception e){
-					e.printStackTrace();
-					System.out.println("There was an issue creating the account.");
-				}
-			}
-		}
-	}
-
-	public void createWindow(BillingWindow billingWindow, String first, String last, String business, String email){
-		panel = new CreateUserPanel();
-		panel.setFirstName(first);
-		panel.setLastName(last);
-		panel.setBusinessName(business);
-		panel.setEmailAddress(email);
-		Object[] options = {"Cancel", "Continue"};
-		int choice = JOptionPane.showOptionDialog(billingWindow, panel, "Create Account", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
-		if(choice == 1){
-			if(!panel.checkAll()){
-				JOptionPane.showMessageDialog(billingWindow, "Some information is missing.");
-				createWindow(billingWindow, panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-			}else if(!Arrays.equals(panel.getPassword(), panel.getRedundant())){
-				JOptionPane.showMessageDialog(billingWindow, "Your passwords didn't match.\nPlease try again.");
-				createWindow(billingWindow, panel.getUsername(), panel.getFirstName(), panel.getLastName(), panel.getBusinessName());
-			}else if(UserHandler.usernameExists(panel.getUsername())){
-				JOptionPane.showMessageDialog(billingWindow, "That username alreay exists.");
-				createWindow(billingWindow, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-			}else{
-				try{
-					String hash = Password.createHash(panel.getPassword());
-					UserHandler.createAccount(panel.getUsername(), hash);
-					String db = UserHandler.createSQLEntry(billingWindow.getModel().getRootStatement(), panel.getUsername(), hash, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
-					UserHandler.createCheckFile(panel.getUsername(), db);
-					if(!db.equals("")){
-						UserHandler.createMainFile(db, billingWindow.getModel().getOS());
-					}
-					billingWindow.getLoginScreen().validLogin(panel.getUsername());
-					if(!db.equals("")){
-						billingWindow.getModel().openFile(new File(db + ".bil"));
-						billingWindow.getDesktop().placeComponents();
-						billingWindow.getRibbon().enableButton("Add User Privilege");
-						billingWindow.getRibbon().enableButton("New Account");
 					}
 				}catch(Exception e){
 					e.printStackTrace();
