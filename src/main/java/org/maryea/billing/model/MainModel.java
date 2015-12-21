@@ -13,6 +13,13 @@ import java.sql.Statement;
 import java.util.Vector;
 import java.util.Scanner;
 
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
 public class MainModel{
 	private final File CREDENTIAL_FILE = new File("src/main/resources/credentials.pass");
 
@@ -32,6 +39,10 @@ public class MainModel{
 	private Vector<Account> accounts;
 	private Vector<User> users;
 	
+	
+	//private Configuration rootCfg, userCfg;
+	private SessionFactory rootSf, userSf;
+	
 	public MainModel(BillingWindow bw, String osName){
 		billingWindow = bw;
 		this.osName = osName;
@@ -44,6 +55,8 @@ public class MainModel{
 			System.out.println("There was an issue connecting to the root SQL account.");
 			e.printStackTrace();
 		}
+		
+		rootSf = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
 	}
 
 	public void addAccount(Account account){
@@ -149,8 +162,24 @@ public class MainModel{
 		try{
 			String query = "USE " + name;
 			userStatement.execute(query);
-			query = "UPDATE billingAdmin.users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() +"'";
-			rootStatement.execute(query);
+			//query = "UPDATE billingAdmin.users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() +"'";
+			//rootStatement.execute(query);
+			
+			Session session = rootSf.openSession();
+			Transaction tx = null;
+			try{
+				tx = session.beginTransaction();
+				String sql = "UPDATE users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() + "'";
+				SQLQuery newQuery = session.createSQLQuery(sql);
+				newQuery.executeUpdate();
+			}catch(HibernateException h){
+				if(tx != null){
+					tx.rollback();
+				}
+				h.printStackTrace();
+			}finally{
+				session.close();
+			}
 
 			accounts = AccountHandler.loadAccounts(userStatement);
 			accountListPanel.loadTable(accounts);

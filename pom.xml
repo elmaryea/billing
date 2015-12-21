@@ -21,6 +21,41 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.pushingpixels</groupId>
+    	<artifactId>flamingo</artifactId>
+    	<version>7.3</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/flamingo-7.3.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>com.mysql</groupId>
+    	<artifactId>all</artifactId>
+    	<version>5.1.36</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/mysql-connector-java-5.1.36-bin.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>org.hibernate</groupId>
+    	<artifactId>all</artifactId>
+    	<version>5.0.6</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/required/hibernate-core-5.0.6.Final.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>javax.mail</groupId>
+    	<artifactId>all</artifactId>
+    	<version>unknown</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/javax.mail.jar</systemPath>
+    </dependency>
+    <dependency>
+    	<groupId>org.pushingpixels</groupId>
+    	<artifactId>trident</artifactId>
+    	<version>7.3</version>
+    	<scope>system</scope>
+    	<systemPath>${basedir}/lib/trident-7.3.jar</systemPath>
+    </dependency>
   </dependencies>
   <description>This is a billing program specialized for child care program (more tailored to home based programs than those run by a company).</description>
   <organization>

@@ -22,15 +22,15 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/eric/jars/flamingo-7.3.jar"/>
-	<classpathentry kind="lib" path="/home/eric/jars/javax.mail.jar"/>
-	<classpathentry kind="lib" path="/home/eric/jars/jtreetable-1.2.1.jar"/>
-	<classpathentry kind="lib" path="/home/eric/jars/mysql-connector-java-5.1.36-bin.jar"/>
-	<classpathentry kind="lib" path="/home/eric/jars/trident-7.3.jar"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/flamingo-7.3.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.36-bin.jar"/>
+	<classpathentry kind="lib" path="lib/required/hibernate-core-5.0.6.Final.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/trident-7.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -17,6 +17,7 @@
 /home/eric/billing/src/main/java/org/maryea/billing/content/BillViewFrame.java
 /home/eric/billing/src/main/java/org/maryea/billing/popups/ChangePasswordPanel.java
 /home/eric/billing/src/main/java/org/maryea/billing/model/UserHandler.java
+/home/eric/billing/src/main/java/org/maryea/billing/model/RequestFocusListener.java
 /home/eric/billing/src/main/java/org/maryea/billing/content/AccountViewFrame.java
 /home/eric/billing/src/main/java/org/maryea/billing/popups/NewFileBox.java
 /home/eric/billing/src/main/java/org/maryea/billing/model/AccountHandler.java
