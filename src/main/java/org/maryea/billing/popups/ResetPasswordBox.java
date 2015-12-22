@@ -19,7 +19,7 @@ public class ResetPasswordBox{
 		if(choice == 1){
 			String user = panel.getUsername();
 			if(UserHandler.userExists(user)){
-				UserHandler.resetPassword(bw.getModel().getRootStatement(), user);
+				UserHandler.resetPassword(bw.getModel().getRootSF(), user);
 				
 				JOptionPane.showMessageDialog(bw, "An email has been sent to you with a temporary password which you can use to log in.");
 			}else{

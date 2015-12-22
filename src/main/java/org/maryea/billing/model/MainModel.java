@@ -7,9 +7,6 @@ import org.maryea.billing.content.BillViewPanel;
 import org.maryea.billing.content.OverviewPanel;
 import java.awt.Component;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.Vector;
 import java.util.Scanner;
 
@@ -25,38 +22,28 @@ public class MainModel{
 
 	private Account currentAccount;
 	private AccountListPanel accountListPanel;
-	//private AccountViewPanel accountViewPanel;
+	private AccountViewPanel accountViewPanel;
 	private BillingWindow billingWindow;
-	//private BillViewPanel billViewPanel;
+	private BillViewPanel billViewPanel;
 	private Child currentChild;
-	private Connection rootConnection, userConnection;
+	private Configuration userCfg;
 	private File currentFile;
-	//private OverviewPanel overviewPanel;
+	private OverviewPanel overviewPanel;
 	private Payer currentPayer;
-	private Statement rootStatement, userStatement;
+	private SessionFactory rootSF, userSF;
 	private String osName;
 	private User currentUser;
 	private Vector<Account> accounts;
 	private Vector<User> users;
 	
-	
-	//private Configuration rootCfg, userCfg;
-	private SessionFactory rootSf, userSf;
-	
+
 	public MainModel(BillingWindow bw, String osName){
 		billingWindow = bw;
 		this.osName = osName;
 		accounts = new Vector<Account>();
 		users = new Vector<User>();
-		try{
-			rootConnection = DriverManager.getConnection("jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com", "root", "billing");
-			rootStatement = rootConnection.createStatement();
-		}catch(Exception e){
-			System.out.println("There was an issue connecting to the root SQL account.");
-			e.printStackTrace();
-		}
-		
-		rootSf = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+
+		rootSF = new Configuration().configure("billingAdmin.cfg.xml").buildSessionFactory();
 	}
 
 	public void addAccount(Account account){
@@ -121,12 +108,13 @@ public class MainModel{
 	public String getOS(){
 		return osName;
 	}
-	public Statement getRootStatement(){
-		return rootStatement;
+	public SessionFactory getRootSF(){
+		return rootSF;
 	}
-	public Statement getUserStatement(){
-		return userStatement;
+	public SessionFactory getUserSF(){
+		return userSF;
 	}
+
 	public void loadUser(String username){
 		for(int i = 0; i < users.size(); i++){
 			if(users.get(i).getUsername().equals(username)){
@@ -136,16 +124,15 @@ public class MainModel{
 		}
 	}
 	public void loadUsers(){
-		users = UserHandler.loadUsers(rootStatement);
+		users = UserHandler.loadUsers(rootSF);
 	}
 	public void logout(){
 		if(currentFile != null){
 			saveOption();
 		}
 		try{
-			if(userConnection != null){
-				userConnection.close();
-				userStatement.close();
+			if(userSF != null){
+				userSF.close();
 			}
 		}catch(Exception e){
 			System.out.println("There was an error closing the User's SQL Connection.");
@@ -160,28 +147,35 @@ public class MainModel{
 	}
 	public void openWorkingDB(String name){
 		try{
-			String query = "USE " + name;
-			userStatement.execute(query);
-			//query = "UPDATE billingAdmin.users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() +"'";
-			//rootStatement.execute(query);
-			
-			Session session = rootSf.openSession();
-			Transaction tx = null;
+			Session sessionU = userSF.openSession();
+			Session sessionR = rootSF.openSession();
+			Transaction txU = null;
+			Transaction txR = null;
+			String stmtU = "USE " + name;
+			String stmtR = "UPDATE users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() + "'";
 			try{
-				tx = session.beginTransaction();
-				String sql = "UPDATE users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() + "'";
-				SQLQuery newQuery = session.createSQLQuery(sql);
-				newQuery.executeUpdate();
+				txU = sessionU.beginTransaction();
+				txR = sessionR.beginTransaction();
+				SQLQuery queryU = sessionU.createSQLQuery(stmtU);
+				SQLQuery queryR = sessionR.createSQLQuery(stmtR);
+				queryU.executeUpdate();
+				queryR.executeUpdate();
+				txU.commit();
+				txR.commit();
 			}catch(HibernateException h){
-				if(tx != null){
-					tx.rollback();
+				if(txU != null){
+					txU.rollback();
+				}
+				if(txR != null){
+					txR.rollback();
 				}
 				h.printStackTrace();
 			}finally{
-				session.close();
+				sessionU.close();
+				sessionR.close();
 			}
 
-			accounts = AccountHandler.loadAccounts(userStatement);
+			accounts = AccountHandler.loadAccounts(userSF);
 			accountListPanel.loadTable(accounts);
 			billingWindow.getDesktop().placeComponents();
 			billingWindow.getRibbon().enableButton("Add User Privilege");
@@ -217,8 +211,9 @@ public class MainModel{
 					knownUser = lineScan.next();
 					hash = lineScan.next();
 					if(knownUser.equals(currentUser.getUsername())){
-						userConnection = DriverManager.getConnection("jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com", currentUser.getUsername(), hash);
-						userStatement = userConnection.createStatement();
+						userCfg.setProperty("hibernate.connection.username", currentUser.getUsername());
+						userCfg.setProperty("hibernate.connection.password", hash);
+						userSF = userCfg.buildSessionFactory();
 						break;
 					}
 				}
@@ -233,10 +228,8 @@ public class MainModel{
 		if(currentFile != null){
 			if(saveOption()){
 				try{
-					userStatement.close();
-					rootStatement.close();
-					userConnection.close();
-					rootConnection.close();
+					userSF.close();
+					rootSF.close();
 				}catch(Exception e){
 					System.out.println("There was an error closing the SQL Connections.");
 					e.printStackTrace();
@@ -245,10 +238,8 @@ public class MainModel{
 			}
 		}else{
 			try{
-				userStatement.close();
-				rootStatement.close();
-				userConnection.close();
-				rootConnection.close();
+				userSF.close();
+				rootSF.close();
 			}catch(Exception e){
 				System.out.println("There was an error closing the SQL Connections");
 				e.printStackTrace();
@@ -263,22 +254,23 @@ public class MainModel{
 		accountListPanel = a;
 	}
 	public void setAccountViewPanel(AccountViewPanel a){
-		//accountViewPanel = a;
+		accountViewPanel = a;
 	}
 	public void setBillViewPanel(BillViewPanel b){
-		//billViewPanel = b;
+		billViewPanel = b;
 	}
 	public void setCurrentUser(User user, String hash){
 		currentUser = user;
 		try{
-			userConnection = DriverManager.getConnection("jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com", "user", "hash");
-			userStatement = userConnection.createStatement();
+			userCfg.setProperty("hibernate.connection.username", user.getUsername());
+			userCfg.setProperty("hibernate.connection.password", hash);
+			userSF = userCfg.buildSessionFactory();
 		}catch(Exception e){
 			System.out.println("There was an issues connectiong to the user SQL account");
 			e.printStackTrace();
 		}
 	}
 	public void setOverviewPanel(OverviewPanel o){
-		//overviewPanel = o;
+		overviewPanel = o;
 	}
 }

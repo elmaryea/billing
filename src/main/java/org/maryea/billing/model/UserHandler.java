@@ -9,14 +9,19 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Vector;
 import javax.mail.Message;
-import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 public class UserHandler{
 	public static String CREDENTIALS = "src/main/resources/credentials.pass";
@@ -26,7 +31,7 @@ public class UserHandler{
 	private static String EMAIL_BODY = "Your temporary password is ";
 
 	
-	public static void addUserPrivilege(String fileName, String username, Statement statement){
+	public static void addUserPrivilege(String fileName, String username, SessionFactory factory){
 		try{
 			createCheckFile(username, fileName);
 			String command = "GRANT SELECT,INSERT,DELETE,DROP,ALTER,UPDATE ON " + fileName + ".* TO '" + username + "'";
@@ -36,17 +41,21 @@ public class UserHandler{
 			e.printStackTrace();
 		}
 	}
-	public static void changeSQLPassword(Statement statement, String username, String hash){
+	public static void changeSQLPassword(SessionFactory factory, String username, String hash){
+		Session session = factory.openSession();
+		Transaction tx = null;
 		try{
-			String command = "SET PASSWORD FOR '" + username + "' = password('" + hash + "')";
+			String command = "SET PASSWORD FOR '" + username + "' = PASSWORD('" + hash + "')";
 			statement.execute(command);
-		}catch(Exception e){
+		}catch(HibernateException e){
 			System.out.println("There was an error setting/change the sql password for " + username);
 			e.printStackTrace();
+		}finally{
+			
 		}
 	}
 
-	public static void changePassword(Statement statement, String username, String hash){
+	public static void changePassword(SessionFactory factory, String username, String hash){
 		Scanner fileScan, lineScan;
 		String line, user;
 		File temp = new File("com/src/resources/temp.pass");
@@ -73,7 +82,7 @@ public class UserHandler{
 			File credentials = new File(CREDENTIALS);
 			temp.renameTo(credentials);
 			createAccount(username, hash);
-			changeSQLPassword(statement, username, hash);
+			changeSQLPassword(factory, username, hash);
 		}catch(Exception e){
 			System.out.println("There was an error changing the password.");
 			e.printStackTrace();
@@ -113,8 +122,8 @@ public class UserHandler{
 		}
 	}
 
-	public static String createDatabase(Statement statement, String username, String dbName){
-		String db = newDBName(statement, dbName);
+	public static String createDatabase(SessionFactory factory, String username, String dbName){
+		String db = newDBName(factory, dbName);
 		try{
 			String command = "SHOW DATABASES";
 			ResultSet results = statement.executeQuery(command);
@@ -217,7 +226,7 @@ public class UserHandler{
 		}
 	}
 
-	public static String createSQLEntry(Statement statement, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
+	public static String createSQLEntry(SessionFactory factory, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
 		String db = "";
 		try{
 			String command = "CREATE USER '" + username + "' identified by 'temp'";
@@ -239,20 +248,29 @@ public class UserHandler{
 		return db;
 	}
 
-	public static boolean dbExists(Statement statement, String testName){
+	public static boolean dbExists(SessionFactory factory, String testName){
 		boolean ret = false;
+		org.hibernate.Session session = factory.openSession();
+		Transaction tx = null;
 		try{
+			tx = session.beginTransaction();
 			String query = "SELECT businessName FROM billingAdmin.users WHERE businessName = '" + testName + "'";
-			ResultSet result = statement.executeQuery(query);
-			ret = result.next();
-		}catch(Exception e){
-			System.out.println("There was an error checking for an existing database.");
+			SQLQuery sqlQuery = session.createSQLQuery(query);
+			List<Object> results = sqlQuery.list();
+			ret = !results.isEmpty();
+			tx.commit();
+		}catch(HibernateException e){
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
 		return ret;
 	}
 
-	public static Vector<User> loadUsers(Statement statement){
+	public static Vector<User> loadUsers(SessionFactory factory){
 		Vector<User> users = new Vector<User>();
 		try{
 			String query = "SELECT * FROM billingAdmin.users";
@@ -275,7 +293,7 @@ public class UserHandler{
 		return users;
 	}
 
-	public static String newDBName(Statement statement, String bName){
+	public static String newDBName(SessionFactory factory, String bName){
 		String newName = bName;
 		int count = 1;
 		while(dbExists(statement, newName)){
@@ -285,7 +303,7 @@ public class UserHandler{
 		return newName;
 	}
 
-	public static void resetPassword(Statement statement, String username){
+	public static void resetPassword(SessionFactory factory, String username){
 		SecureRandom random = new SecureRandom();
 		String tempPassword = new BigInteger(130, random).toString(15);
 		try{
@@ -316,7 +334,7 @@ public class UserHandler{
 	    props.put("mail.smtp.port", "587");
 	    props.put("mail.smtp.auth", "true");
 
-	    Session session = Session.getDefaultInstance(props);
+	    javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
 	    MimeMessage message = new MimeMessage(session);
 
 	    try {

@@ -153,7 +153,7 @@ public class Ribbon extends JRibbon{
 					Scanner scanFile = new Scanner(currentFile);
 					String dbName =scanFile.nextLine();
 					scanFile.close();
-					UserHandler.addUserPrivilege(dbName, username, billingWindow.getModel().getRootStatement());
+					UserHandler.addUserPrivilege(dbName, username, billingWindow.getModel().getRootSF());
 				}catch(Exception e){
 					System.out.println("There was an issue getting the database name from the current file.");
 					e.printStackTrace();

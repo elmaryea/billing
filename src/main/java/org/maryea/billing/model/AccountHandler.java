@@ -5,9 +5,11 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.Vector;
 
+import org.hibernate.SessionFactory;
+
 public class AccountHandler{
 	
-	public static Vector<Account> loadAccounts(Statement statement){
+	public static Vector<Account> loadAccounts(SessionFactory factory){
 		Vector<Account> accounts = new Vector<Account>();
 		Vector<Child> children = new Vector<Child>();
 		Vector<Payer> payers = new Vector<Payer>();

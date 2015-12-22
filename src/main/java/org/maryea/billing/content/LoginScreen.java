@@ -1,10 +1,13 @@
 package org.maryea.billing.content;
 
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.maryea.billing.model.UserHandler;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -96,18 +99,24 @@ public class LoginScreen extends JPanel{
 			JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
 		}else if(UserHandler.verifyPassword(input, user)){
 			validLogin(user);
+			Session session = billingWindow.getModel().getRootSF().openSession();
+			Transaction tx = null;
 			try{
-				String query = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
-				ResultSet results = billingWindow.getModel().getRootStatement().executeQuery(query);
-				if(results.next()){
-					String dbName = results.getString("lastProgramOpen");
-					if(!results.wasNull()){
-						billingWindow.getModel().openWorkingDB(dbName);
-					}
+				tx = session.beginTransaction();
+				String stmt = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
+				SQLQuery query = session.createSQLQuery(stmt);
+				List<Object> results = query.list();
+				if(!results.isEmpty()){
+					String dbName = (String)results.get(0);
+					billingWindow.getModel().openWorkingDB(dbName);
 				}
-			}catch(SQLException s){
-				System.out.println("There was an error getting the most recent program.");
-				s.printStackTrace();
+				tx.commit();
+			}catch(HibernateException h){
+				if(tx != null){
+					tx.rollback();
+				}
+			}finally{
+				session.close();
 			}
 		}else{
 			JOptionPane.showMessageDialog(billingWindow, "Incorrect username or password.", "", JOptionPane.ERROR_MESSAGE);
