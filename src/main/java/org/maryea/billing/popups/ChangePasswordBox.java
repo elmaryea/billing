@@ -29,7 +29,7 @@ public class ChangePasswordBox{
 				setBox(bw);
 			}else{
 				try{
-					UserHandler.changePassword(bw.getModel().getRootSF(), bw.getModel().getCurrentUser().getUsername(), Password.createHash(panel.getNewOne()));
+					UserHandler.changePassword(bw.getModel().getCurrentUser().getUsername(), Password.createHash(panel.getNewOne()));
 				}catch(Exception e){
 					JOptionPane.showMessageDialog(bw, "There was an error changing your password.");
 				}

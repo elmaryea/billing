@@ -62,7 +62,7 @@ public class CreateUserBox{
 				try{
 					String hash = Password.createHash(panel.getPassword());
 					UserHandler.createAccount(panel.getUsername(), hash);
-					String db = UserHandler.createSQLEntry(billingWindow.getModel().getRootSF(), panel.getUsername(), hash, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
+					String db = UserHandler.createSQLEntry(billingWindow.getModel().getSF(), panel.getUsername(), hash, panel.getFirstName(), panel.getLastName(), panel.getBusinessName(), panel.getEmailAddress());
 					UserHandler.createCheckFile(panel.getUsername(), db);
 					if(!db.equals("")){
 						UserHandler.createMainFile(db, billingWindow.getModel().getOS());

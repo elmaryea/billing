@@ -11,7 +11,7 @@ public class NewFileBox{
 		String fileName = JOptionPane.showInputDialog(m.getBillingWindow(), "Business Name:", "New Business", JOptionPane.QUESTION_MESSAGE);
 		File newFile = m.getBillingWindow().viewSaveScreen(fileName + ".bil");
 		if(newFile != null && !newFile.equals(new File(""))){
-			fileName = UserHandler.createDatabase(m.getRootSF(), m.getCurrentUser().getUsername(), newFile.getName().replaceFirst("[.][^.]+$", ""));
+			fileName = UserHandler.createDatabase(m.getSF(), m.getCurrentUser().getUsername(), newFile.getName().replaceFirst("[.][^.]+$", ""));
 			UserHandler.createCheckFile(m.getCurrentUser().getUsername(), newFile.getName().replaceFirst("[.][^.]+$", ""));
 			try{
 				//File checkFile = new File("src/com/resources/usr/" + bw.getUser().getUsername() + ".cred");

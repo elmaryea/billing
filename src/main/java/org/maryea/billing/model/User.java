@@ -24,10 +24,7 @@ public class User{
 	
 	@Column(name = "lastName")
 	private String lastName;
-	
-	@Column(name = "businessName")
-	private String businessName;
-	
+
 	@Column(name = "email")
 	private String emailAddress;
 	
@@ -37,11 +34,15 @@ public class User{
 	@Column(name = "lastPassChange")
 	private Date lastPassChange;
 
-	public User(String user, String first, String last, String business, String email, Date passChange, int id){
+	//Default constructor for hibernate
+	public User(){
+		
+	}
+	
+	public User(String user, String first, String last, String email, Date passChange, int id){
 		username = user;
 		firstName = first;
 		lastName = last;
-		businessName = business;
 		emailAddress = email;
 		currentUser = false;
 		lastPassChange = passChange;
@@ -60,10 +61,6 @@ public class User{
 		return lastName;
 	}
 
-	public String getBusinessName(){
-		return businessName;
-	}
-
 	public String getEmailAddress(){
 		return emailAddress;
 	}
@@ -72,7 +69,7 @@ public class User{
 		return lastPassChange;
 	}
 
-	public int getID(){
+	public int getId(){
 		return id;
 	}
 	
@@ -80,7 +77,7 @@ public class User{
 		return currentUser;
 	}
 	
-	public void setID(int id){
+	public void setId(int id){
 		this.id = id;
 	}
 
@@ -102,10 +99,6 @@ public class User{
 	
 	public void setLastName(String lastName){
 		this.lastName = lastName;
-	}
-	
-	public void setBusinessName(String businessName){
-		this.businessName = businessName;
 	}
 	
 	public void setEmailAddress(String emailAddress){

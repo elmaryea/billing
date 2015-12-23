@@ -19,6 +19,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 
 public class UserHandler{
 	public static String CREDENTIALS = "src/main/resources/credentials.pass";
@@ -27,7 +28,7 @@ public class UserHandler{
 	private static String EMAIL_SUBJECT = "Billing Program Password Reset";
 	private static String EMAIL_BODY = "Your temporary password is ";
 
-	
+	//TODO: Update so that it adds into User_Business table
 	public static void addUserPrivilege(String fileName, String username, SessionFactory factory){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -46,26 +47,8 @@ public class UserHandler{
 			session.close();
 		}
 	}
-	public static void changeSQLPassword(SessionFactory factory, String username, String hash){
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try{
-			tx = session.beginTransaction();
-			String query = "SET PASSWORD FOR '" + username + "' = PASSWORD('" + hash + "')";
-			SQLQuery sqlQuery = session.createSQLQuery(query);
-			sqlQuery.executeUpdate();
-			tx.commit();
-		}catch(HibernateException e){
-			if(tx != null){
-				tx.rollback();
-			}
-			e.printStackTrace();
-		}finally{
-			session.close();
-		}
-	}
 
-	public static void changePassword(SessionFactory factory, String username, String hash){
+	public static void changePassword(String username, String hash){
 		Scanner fileScan, lineScan;
 		String line, user;
 		File temp = new File("com/src/resources/temp.pass");
@@ -92,7 +75,6 @@ public class UserHandler{
 			File credentials = new File(CREDENTIALS);
 			temp.renameTo(credentials);
 			createAccount(username, hash);
-			changeSQLPassword(factory, username, hash);
 		}catch(Exception e){
 			System.out.println("There was an error changing the password.");
 			e.printStackTrace();
@@ -133,88 +115,18 @@ public class UserHandler{
 	}
 
 	public static String createDatabase(SessionFactory factory, String username, String dbName){
-		String db = newDBName(factory, dbName);
+		String db = newDBName(factory, dbName.replaceAll("\\s", ""));
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
-			String command = "SHOW DATABASES";
-			SQLQuery sqlQuery = session.createSQLQuery(command);
-			List<String> results = sqlQuery.list();
-			boolean exists = false;
-			for(String result : results){
-				if(result.equals(dbName)){
-					exists = true;
-					break;
-				}
-			}
-			if(!exists){
-				command = "CREATE DATABASE " + db;
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				command = "GRANT CREATE,SELECT,INSERT,DELETE,DROP,ALTER,UPDATE on " + db + ".* to '" + username + "'";
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				command = "USE " + db;
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				command = "CREATE TABLE Accounts (Account_ID INT NOT NULL AUTO_INCREMENT, "
-						+ "FirstName1 VARCHAR(30) NOT NULL, "
-						+ "LastName1 VARCHAR(30) NOT NULL, "
-						+ "FirstName2 VARCHAR(30), "
-						+ "LastName2 VARCHAR(30), "
-						+ "Address VARCHAR(30) NOT NULL, "
-						+ "City VARCHAR(30) NOT NULL, "
-						+ "State VARCHAR(30) NOT NULL, "
-						+ "ZipCode VARCHAR(5) NOT NULL, "
-						+ "HomePhone VARCHAR(11), "
-						+ "CellPhone VARCHAR(11), "
-						+ "Balance DECIMAL(6, 2) NOT NULL, "
-						+ "PRIMARY KEY (Account_ID))";
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				command = "CREATE TABLE Children (Child_ID INT NOT NULL AUTO_INCREMENT, "
-						+ "FirstName VARCHAR(30) NOT NULL, "
-						+ "LastName VARCHAR(30) NOT NULL, "
-						+ "Balance DECIMAL(6, 2) NOT NULL, "
-						+ "Account_ID INT NOT NULL, "
-						+ "PRIMARY KEY (Child_ID), "
-						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID))";
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				command = "CREATE TABLE Payers (Payer_ID INT NOT NULL AUTO_INCREMENT, "
-						+ "FirstName VARCHAR(30) NOT NULL, "
-						+ "LastName VARCHAR(30) NOT NULL, "
-						+ "Address VARCHAR(30) NOT NULL, "
-						+ "City VARCHAR(30) NOT NULL, "
-						+ "State VARCHAR(30) NOT NULL, "
-						+ "ZipCode VARCHAR(5) NOT NULL, "
-						+ "HomePhone VARCHAR(11), "
-						+ "CellPhone VARCHAR(11), "
-						+ "Account_ID int, "
-						+ "PRIMARY KEY (Payer_ID), "
-						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID))";
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				command = "CREATE TABLE Payments (Payment_ID INT NOT NULL AUTO_INCREMENT, "
-						+ "DatePaid DATE NOT NULL, "
-						+ "AmountPaid DECIMAL(6, 2) NOT NULL, "
-						+ "Balance DECIMAL(6, 2) NOT NULL, "
-						+ "Cash TINYINT NOT NULL, "
-						+ "CheckNumber INT, "
-						+ "Account_ID INT NOT NULL, "
-						+ "Payer_ID INT NOT NULL, "
-						+ "Payment_ID_FKRef INT, "
-						+ "Child_ID INT, "
-						+ "PRIMARY KEY (Payment_ID), "
-						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID), "
-						+ "FOREIGN KEY (Payer_ID) REFERENCES Payers(Payer_ID), "
-						+ "FOREIGN KEY (Payment_ID_FKRef) REFERENCES Payments(Payment_ID), "
-						+ "FOREIGN KEY (Child_ID) REFERENCES Children(Child_ID))";
-				sqlQuery = session.createSQLQuery(command);
-				sqlQuery.executeUpdate();
-				tx.commit();
-			}
+			String query = "INSERT INTO Businesses (Business_Name) VALUES ('" + db + "')";
+			SQLQuery sqlQuery= session.createSQLQuery(query);
+			sqlQuery.executeUpdate();
+			query = "INSERT INTO User_Business (Business_ID, User_ID) VALUES SELECT Business_ID, User_ID FROM"
+					+ "Businesses b INNER JOIN Users u WHERE b.Business_Name = '" + db + "' AND u.Username = '" + username + "'";
+			sqlQuery.executeUpdate();
+			tx.commit();
 		}catch(HibernateException e){
 			if(tx != null){
 				tx.rollback();
@@ -255,23 +167,18 @@ public class UserHandler{
 
 	public static String createSQLEntry(SessionFactory factory, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
 		String db = "";
+		if(!businessName.equals("")){
+			db = createDatabase(factory, username, businessName);
+		}
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
-			String command = "CREATE USER '" + username + "' identified by 'temp'";
-			SQLQuery query = session.createSQLQuery(command);
-			query.executeUpdate();
-			changeSQLPassword(factory, username, hash);
-			if(!businessName.equals("")){
-				db = newDBName(factory, businessName.replaceAll("\\s", ""));
-				createDatabase(factory, username, db);
-			}
 			Calendar c = Calendar.getInstance();
-			command = "INSERT INTO billingAdmin.users (username, firstName, lastName, businessName, email, lastPassChange) values ('" + 
-				username + "', '" + firstName + "', '" + lastName + "', '" + businessName + "', '" + emailAddress + "', '" + 
+			String command = "INSERT INTO Users (Username, First_Name, Last_Name,  Email_Address, Last_Pass_Change) values ('" + 
+				username + "', '" + firstName + "', '" + lastName + "', '" + emailAddress + "', '" + 
 				c.get(Calendar.YEAR)  +"-" + (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DAY_OF_MONTH) +"')";
-			query = session.createSQLQuery(command);
+			SQLQuery query = session.createSQLQuery(command);
 			query.executeUpdate();
 			tx.commit();
 		}catch(HibernateException e){
@@ -291,7 +198,7 @@ public class UserHandler{
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
-			String query = "SELECT businessName FROM billingAdmin.users WHERE businessName = '" + testName + "'";
+			String query = "SELECT Business_Name FROM Businesses JOIN User_Business ON Businesses.Business_ID=User_Business.Business_ID JOIN Users ON User_Business.User_ID=Users.User_ID WHERE Business_Name = '" + testName + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(query);
 			List<Object> results = sqlQuery.list();
 			ret = !results.isEmpty();
@@ -336,32 +243,21 @@ public class UserHandler{
 		return newName;
 	}
 
-	public static void resetPassword(SessionFactory factory, String username){
+	public static void resetPassword(List<User> users, String username){
 		SecureRandom random = new SecureRandom();
 		String tempPassword = new BigInteger(130, random).toString(15);
 		try{
 			String hash = Password.createHash(tempPassword);
-			changePassword(factory, username, hash);
+			changePassword(username, hash);
 		}catch(Exception e){
 			System.out.println("Error resetting the password.");
 			e.printStackTrace();
 		}
-		org.hibernate.Session session = factory.openSession();
-		Transaction tx = null;
-		try{
-			tx = session.beginTransaction();
-			String query = "SELECT email FROM billingAdmin.users WHERE username = '" + username + "'";
-			SQLQuery sqlQuery = session.createSQLQuery(query);
-			List<String> result = (List<String>)sqlQuery.list();
-			sendResetEmail(result.get(0), tempPassword);
-			tx.commit();
-		}catch(Exception e){
-			if(tx != null){
-				tx.rollback();
+		for(User user : users){
+			if(user.getUsername().equals(username)){
+				sendResetEmail(user.getEmailAddress(), tempPassword);
+				break;
 			}
-			e.printStackTrace();
-		}finally{
-			session.close();
 		}
 	}
 

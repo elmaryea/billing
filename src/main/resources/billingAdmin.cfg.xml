@@ -5,8 +5,9 @@
  <session-factory>
   <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
   <property name="hibernate.connection.password">billing</property>
-  <property name="hibernate.connection.url">jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com:3306/billingAdmin</property>
-  <property name="hibernate.connection.username">root</property>
+  <property name="hibernate.connection.url">jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com:3306/billing</property>
+  <property name="hibernate.connection.username">billingSQLUser</property>
   <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+  <mapping resource="User.hbm.xml" />
  </session-factory>
 </hibernate-configuration>

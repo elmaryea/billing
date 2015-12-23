@@ -99,7 +99,7 @@ public class LoginScreen extends JPanel{
 			JOptionPane.showMessageDialog(billingWindow, "You must enter a password.", "", JOptionPane.ERROR_MESSAGE);
 		}else if(UserHandler.verifyPassword(input, user)){
 			validLogin(user);
-			Session session = billingWindow.getModel().getRootSF().openSession();
+			Session session = billingWindow.getModel().getSF().openSession();
 			Transaction tx = null;
 			try{
 				tx = session.beginTransaction();
@@ -108,7 +108,7 @@ public class LoginScreen extends JPanel{
 				List<Object> results = query.list();
 				if(!results.isEmpty()){
 					String dbName = (String)results.get(0);
-					billingWindow.getModel().openWorkingDB(dbName);
+					billingWindow.getModel().setWorkingScreen(dbName);
 				}
 				tx.commit();
 			}catch(HibernateException h){
@@ -159,7 +159,6 @@ public class LoginScreen extends JPanel{
 		billingWindow.getRibbon().enableButton("Change Password");
 		billingWindow.getRibbon().enableButton("New Business");
 		billingWindow.getModel().loadUser(user);
-		billingWindow.getModel().openUserSQL();
 		setEnabled(false);
 		setVisible(false);
 		billingWindow.getContentPane().add(billingWindow.getDesktop());

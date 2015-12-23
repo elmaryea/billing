@@ -27,11 +27,10 @@ public class MainModel{
 	private BillingWindow billingWindow;
 	private BillViewPanel billViewPanel;
 	private Child currentChild;
-	private Configuration userCfg;
 	private File currentFile;
 	private OverviewPanel overviewPanel;
 	private Payer currentPayer;
-	private SessionFactory rootSF, userSF;
+	private SessionFactory sessionFactory;
 	private String osName;
 	private User currentUser;
 	private Vector<Account> accounts;
@@ -44,7 +43,7 @@ public class MainModel{
 		accounts = new Vector<Account>();
 		users = new Vector<User>();
 
-		rootSF = new Configuration().configure("billingAdmin.cfg.xml").buildSessionFactory();
+		sessionFactory = new Configuration().configure("billingAdmin.cfg.xml").buildSessionFactory();
 	}
 
 	public void addAccount(Account account){
@@ -109,36 +108,27 @@ public class MainModel{
 	public String getOS(){
 		return osName;
 	}
-	public SessionFactory getRootSF(){
-		return rootSF;
+	public List<User> getUsers(){
+		return users;
 	}
-	public SessionFactory getUserSF(){
-		return userSF;
+	public SessionFactory getSF(){
+		return sessionFactory;
 	}
 
 	public void loadUser(String username){
 		for(int i = 0; i < users.size(); i++){
 			if(users.get(i).getUsername().equals(username)){
 				currentUser = users.get(i);
-				System.out.println(currentUser.getUsername());
 				break;
 			}
 		}
 	}
 	public void loadUsers(){
-		users = UserHandler.loadUsers(rootSF);
+		users = UserHandler.loadUsers(sessionFactory);
 	}
 	public void logout(){
 		if(currentFile != null){
 			saveOption();
-		}
-		try{
-			if(userSF != null){
-				userSF.close();
-			}
-		}catch(Exception e){
-			System.out.println("There was an error closing the User's SQL Connection.");
-			e.printStackTrace();
 		}
 		currentUser = null;
 		currentFile = null;
@@ -147,45 +137,29 @@ public class MainModel{
 		currentAccount = null;
 		accounts = null;
 	}
-	public void openWorkingDB(String name){
-		try{
-			Session sessionU = userSF.openSession();
-			Session sessionR = rootSF.openSession();
-			Transaction txU = null;
-			Transaction txR = null;
-			String stmtU = "USE " + name;
-			String stmtR = "UPDATE users SET lastProgramOpen='" + name + "' WHERE username='" + currentUser.getUsername() + "'";
+	public void setWorkingScreen(String name){
+			Session session = sessionFactory.openSession();
+			Transaction tx = null;
+			String stmt = "UPDATE Users SET Last_Program_Open='" + name + "' WHERE Username='" + currentUser.getUsername() + "'";
 			try{
-				txU = sessionU.beginTransaction();
-				txR = sessionR.beginTransaction();
-				SQLQuery queryU = sessionU.createSQLQuery(stmtU);
-				SQLQuery queryR = sessionR.createSQLQuery(stmtR);
-				queryU.executeUpdate();
-				queryR.executeUpdate();
-				txU.commit();
-				txR.commit();
+				tx = session.beginTransaction();
+				SQLQuery query = session.createSQLQuery(stmt);
+				query.executeUpdate();
+				tx.commit();
 			}catch(HibernateException h){
-				if(txU != null){
-					txU.rollback();
-				}
-				if(txR != null){
-					txR.rollback();
+				if(tx != null){
+					tx.rollback();
 				}
 				h.printStackTrace();
 			}finally{
-				sessionU.close();
-				sessionR.close();
+				session.close();
 			}
 
-			accounts = AccountHandler.loadAccounts(userSF);
+			accounts = AccountHandler.loadAccounts(sessionFactory);
 			accountListPanel.loadTable(accounts);
 			billingWindow.getDesktop().placeComponents();
 			billingWindow.getRibbon().enableButton("Add User Privilege");
 			billingWindow.getRibbon().enableButton("New Account");
-		}catch(Exception e){
-			System.out.println("There was an error connecting to the file database.");
-			e.printStackTrace();
-		}
 	}
 	
 	public void openFile(File file){
@@ -194,44 +168,18 @@ public class MainModel{
 			Scanner scan = new Scanner(file);
 			String name = scan.nextLine();
 			scan.close();
-			openWorkingDB(name);
+			setWorkingScreen(name);
 		}catch(Exception e){
 			System.out.println("There was an error opening the file.");
 			e.printStackTrace();
 		}
 	}
-	public void openUserSQL(){
-		try{
-			Scanner fileScan = new Scanner(CREDENTIAL_FILE);
-			Scanner lineScan;
-			String knownUser, hash, currentLine;
-			while(fileScan.hasNextLine()){
-				currentLine = fileScan.nextLine();
-				lineScan = new Scanner(currentLine);
-				lineScan.useDelimiter("\t");
-				if(lineScan.hasNext()){
-					knownUser = lineScan.next();
-					hash = lineScan.next();
-					if(knownUser.equals(currentUser.getUsername())){
-						userCfg.setProperty("hibernate.connection.username", currentUser.getUsername());
-						userCfg.setProperty("hibernate.connection.password", hash);
-						userSF = userCfg.buildSessionFactory();
-						break;
-					}
-				}
-			}
-			fileScan.close();
-		}catch(Exception e){
-			System.out.println("Other exception.");
-			e.printStackTrace();
-		}
-	}
+
 	public void quit(){
 		if(currentFile != null){
 			if(saveOption()){
 				try{
-					userSF.close();
-					rootSF.close();
+					sessionFactory.close();
 				}catch(Exception e){
 					System.out.println("There was an error closing the SQL Connections.");
 					e.printStackTrace();
@@ -240,8 +188,7 @@ public class MainModel{
 			}
 		}else{
 			try{
-				userSF.close();
-				rootSF.close();
+				sessionFactory.close();
 			}catch(Exception e){
 				System.out.println("There was an error closing the SQL Connections");
 				e.printStackTrace();
@@ -261,16 +208,9 @@ public class MainModel{
 	public void setBillViewPanel(BillViewPanel b){
 		billViewPanel = b;
 	}
-	public void setCurrentUser(User user, String hash){
+	public void setCurrentUser(User user){
 		currentUser = user;
-		try{
-			userCfg.setProperty("hibernate.connection.username", user.getUsername());
-			userCfg.setProperty("hibernate.connection.password", hash);
-			userSF = userCfg.buildSessionFactory();
-		}catch(Exception e){
-			System.out.println("There was an issues connectiong to the user SQL account");
-			e.printStackTrace();
-		}
+
 	}
 	public void setOverviewPanel(OverviewPanel o){
 		overviewPanel = o;
