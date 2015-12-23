@@ -5,14 +5,10 @@ import java.io.FileWriter;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.security.SecureRandom;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Vector;
 import javax.mail.Message;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -20,6 +16,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
@@ -32,26 +29,39 @@ public class UserHandler{
 
 	
 	public static void addUserPrivilege(String fileName, String username, SessionFactory factory){
+		Session session = factory.openSession();
+		Transaction tx = null;
 		try{
-			createCheckFile(username, fileName);
-			String command = "GRANT SELECT,INSERT,DELETE,DROP,ALTER,UPDATE ON " + fileName + ".* TO '" + username + "'";
-			statement.execute(command);
-		}catch(Exception e){
-			System.out.println("There was an issue adding to a users privileges.");
+			tx = session.beginTransaction();
+			String query = "GRANT SELECT,INSERT,DELETE,DROP,ALTER,UPDATE ON " + fileName + ".* TO '" + username + "'";
+			SQLQuery sqlQuery = session.createSQLQuery(query);
+			sqlQuery.executeUpdate();
+			tx.commit();
+		}catch(HibernateException e){
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
 	}
 	public static void changeSQLPassword(SessionFactory factory, String username, String hash){
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try{
-			String command = "SET PASSWORD FOR '" + username + "' = PASSWORD('" + hash + "')";
-			statement.execute(command);
+			tx = session.beginTransaction();
+			String query = "SET PASSWORD FOR '" + username + "' = PASSWORD('" + hash + "')";
+			SQLQuery sqlQuery = session.createSQLQuery(query);
+			sqlQuery.executeUpdate();
+			tx.commit();
 		}catch(HibernateException e){
-			System.out.println("There was an error setting/change the sql password for " + username);
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
 		}finally{
-			
+			session.close();
 		}
 	}
 
@@ -124,22 +134,30 @@ public class UserHandler{
 
 	public static String createDatabase(SessionFactory factory, String username, String dbName){
 		String db = newDBName(factory, dbName);
+		Session session = factory.openSession();
+		Transaction tx = null;
 		try{
+			tx = session.beginTransaction();
 			String command = "SHOW DATABASES";
-			ResultSet results = statement.executeQuery(command);
+			SQLQuery sqlQuery = session.createSQLQuery(command);
+			List<String> results = sqlQuery.list();
 			boolean exists = false;
-			while(results.next()){
-				if(results.getString("Database").equals(dbName)){
+			for(String result : results){
+				if(result.equals(dbName)){
 					exists = true;
+					break;
 				}
 			}
-			if(exists == false){
+			if(!exists){
 				command = "CREATE DATABASE " + db;
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
 				command = "GRANT CREATE,SELECT,INSERT,DELETE,DROP,ALTER,UPDATE on " + db + ".* to '" + username + "'";
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
 				command = "USE " + db;
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
 				command = "CREATE TABLE Accounts (Account_ID INT NOT NULL AUTO_INCREMENT, "
 						+ "FirstName1 VARCHAR(30) NOT NULL, "
 						+ "LastName1 VARCHAR(30) NOT NULL, "
@@ -153,7 +171,8 @@ public class UserHandler{
 						+ "CellPhone VARCHAR(11), "
 						+ "Balance DECIMAL(6, 2) NOT NULL, "
 						+ "PRIMARY KEY (Account_ID))";
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
 				command = "CREATE TABLE Children (Child_ID INT NOT NULL AUTO_INCREMENT, "
 						+ "FirstName VARCHAR(30) NOT NULL, "
 						+ "LastName VARCHAR(30) NOT NULL, "
@@ -161,7 +180,8 @@ public class UserHandler{
 						+ "Account_ID INT NOT NULL, "
 						+ "PRIMARY KEY (Child_ID), "
 						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID))";
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
 				command = "CREATE TABLE Payers (Payer_ID INT NOT NULL AUTO_INCREMENT, "
 						+ "FirstName VARCHAR(30) NOT NULL, "
 						+ "LastName VARCHAR(30) NOT NULL, "
@@ -174,7 +194,8 @@ public class UserHandler{
 						+ "Account_ID int, "
 						+ "PRIMARY KEY (Payer_ID), "
 						+ "FOREIGN KEY (Account_ID) REFERENCES Accounts(Account_ID))";
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
 				command = "CREATE TABLE Payments (Payment_ID INT NOT NULL AUTO_INCREMENT, "
 						+ "DatePaid DATE NOT NULL, "
 						+ "AmountPaid DECIMAL(6, 2) NOT NULL, "
@@ -190,11 +211,17 @@ public class UserHandler{
 						+ "FOREIGN KEY (Payer_ID) REFERENCES Payers(Payer_ID), "
 						+ "FOREIGN KEY (Payment_ID_FKRef) REFERENCES Payments(Payment_ID), "
 						+ "FOREIGN KEY (Child_ID) REFERENCES Children(Child_ID))";
-				statement.execute(command);
+				sqlQuery = session.createSQLQuery(command);
+				sqlQuery.executeUpdate();
+				tx.commit();
 			}
-		}catch(Exception e){
-			System.out.println("Error creating Database.\n");
+		}catch(HibernateException e){
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
 		return db;
 	}
@@ -228,22 +255,32 @@ public class UserHandler{
 
 	public static String createSQLEntry(SessionFactory factory, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
 		String db = "";
+		Session session = factory.openSession();
+		Transaction tx = null;
 		try{
+			tx = session.beginTransaction();
 			String command = "CREATE USER '" + username + "' identified by 'temp'";
-			statement.execute(command);
-			changeSQLPassword(statement, username, hash);
+			SQLQuery query = session.createSQLQuery(command);
+			query.executeUpdate();
+			changeSQLPassword(factory, username, hash);
 			if(!businessName.equals("")){
-				db = newDBName(statement, businessName.replaceAll("\\s", ""));
-				createDatabase(statement, username, db);
+				db = newDBName(factory, businessName.replaceAll("\\s", ""));
+				createDatabase(factory, username, db);
 			}
 			Calendar c = Calendar.getInstance();
 			command = "INSERT INTO billingAdmin.users (username, firstName, lastName, businessName, email, lastPassChange) values ('" + 
 				username + "', '" + firstName + "', '" + lastName + "', '" + businessName + "', '" + emailAddress + "', '" + 
 				c.get(Calendar.YEAR)  +"-" + (c.get(Calendar.MONTH) + 1) + "-" + c.get(Calendar.DAY_OF_MONTH) +"')";
-			statement.execute(command);
-		}catch(Exception e){
-			System.out.println("Error createing SQL credentials.");
+			query = session.createSQLQuery(command);
+			query.executeUpdate();
+			tx.commit();
+		}catch(HibernateException e){
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
 		return db;
 	}
@@ -270,33 +307,29 @@ public class UserHandler{
 		return ret;
 	}
 
-	public static Vector<User> loadUsers(SessionFactory factory){
-		Vector<User> users = new Vector<User>();
+	public static List<User> loadUsers(SessionFactory factory){
+		org.hibernate.Session session = factory.openSession();
+		Transaction tx = null;
 		try{
-			String query = "SELECT * FROM billingAdmin.users";
-			ResultSet result = statement.executeQuery(query);
-			String username, firstName, lastName, businessName, email;
-			Date lastPassChange;
-			while(result.next()){
-				username = result.getString("username");
-				firstName = result.getString("firstName");
-				lastName = result.getString("lastName");
-				businessName = result.getString("businessName");
-				email = result.getString("email");
-				lastPassChange = result.getDate("lastPassChange");
-				users.add(new User(username, firstName, lastName, businessName, email, lastPassChange));
-		}
-		}catch(Exception e){
-			System.out.println("Error loading users.");
+			tx = session.beginTransaction();
+			List<User> result = (List<User>)session.createQuery("FROM org.maryea.billing.model.User").list();
+			tx.commit();
+			return result;
+		}catch(HibernateException e){
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
-		return users;
+		return null;
 	}
 
 	public static String newDBName(SessionFactory factory, String bName){
 		String newName = bName;
 		int count = 1;
-		while(dbExists(statement, newName)){
+		while(dbExists(factory, newName)){
 			newName = bName + Integer.toString(count);
 			count++;
 		}
@@ -308,19 +341,27 @@ public class UserHandler{
 		String tempPassword = new BigInteger(130, random).toString(15);
 		try{
 			String hash = Password.createHash(tempPassword);
-			changePassword(statement, username, hash);
+			changePassword(factory, username, hash);
 		}catch(Exception e){
 			System.out.println("Error resetting the password.");
 			e.printStackTrace();
 		}
+		org.hibernate.Session session = factory.openSession();
+		Transaction tx = null;
 		try{
+			tx = session.beginTransaction();
 			String query = "SELECT email FROM billingAdmin.users WHERE username = '" + username + "'";
-			ResultSet result = statement.executeQuery(query);
-			result.next();
-			sendResetEmail(result.getString("email"), tempPassword);
+			SQLQuery sqlQuery = session.createSQLQuery(query);
+			List<String> result = (List<String>)sqlQuery.list();
+			sendResetEmail(result.get(0), tempPassword);
+			tx.commit();
 		}catch(Exception e){
-			System.out.println("Error getting user name.");
+			if(tx != null){
+				tx.rollback();
+			}
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
 	}
 

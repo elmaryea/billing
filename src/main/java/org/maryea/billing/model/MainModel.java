@@ -8,6 +8,7 @@ import org.maryea.billing.content.OverviewPanel;
 import java.awt.Component;
 import java.io.File;
 import java.util.Vector;
+import java.util.List;
 import java.util.Scanner;
 
 import org.hibernate.HibernateException;
@@ -34,7 +35,7 @@ public class MainModel{
 	private String osName;
 	private User currentUser;
 	private Vector<Account> accounts;
-	private Vector<User> users;
+	private List<User> users;
 	
 
 	public MainModel(BillingWindow bw, String osName){
@@ -119,6 +120,7 @@ public class MainModel{
 		for(int i = 0; i < users.size(); i++){
 			if(users.get(i).getUsername().equals(username)){
 				currentUser = users.get(i);
+				System.out.println(currentUser.getUsername());
 				break;
 			}
 		}
