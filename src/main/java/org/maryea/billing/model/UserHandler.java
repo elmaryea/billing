@@ -121,10 +121,11 @@ public class UserHandler{
 		try{
 			tx = session.beginTransaction();
 			String query = "INSERT INTO Businesses (Business_Name) VALUES ('" + db + "')";
-			SQLQuery sqlQuery= session.createSQLQuery(query);
+			SQLQuery sqlQuery = session.createSQLQuery(query);
 			sqlQuery.executeUpdate();
-			query = "INSERT INTO User_Business (Business_ID, User_ID) VALUES SELECT Business_ID, User_ID FROM"
+			query = "INSERT INTO User_Business (Business_ID, User_ID) SELECT Business_ID, User_ID FROM "
 					+ "Businesses b INNER JOIN Users u WHERE b.Business_Name = '" + db + "' AND u.Username = '" + username + "'";
+			sqlQuery = session.createSQLQuery(query);
 			sqlQuery.executeUpdate();
 			tx.commit();
 		}catch(HibernateException e){
@@ -166,10 +167,6 @@ public class UserHandler{
 	}
 
 	public static String createSQLEntry(SessionFactory factory, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
-		String db = "";
-		if(!businessName.equals("")){
-			db = createDatabase(factory, username, businessName);
-		}
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try{
@@ -188,6 +185,11 @@ public class UserHandler{
 			e.printStackTrace();
 		}finally{
 			session.close();
+		}
+		
+		String db = "";
+		if(!businessName.equals("")){
+			db = createDatabase(factory, username, businessName);
 		}
 		return db;
 	}
