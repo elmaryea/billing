@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 21, 2015 8:12:25 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.maryea.billing.model.User" table="Users">
+        <id name="id" type="int">
+            <column name="User_ID" />
+            <generator class="native" />
+        </id>
+        <property name="username" type="java.lang.String">
+        		<column name="Username" />
+        </property>
+        <property name="firstName" type="java.lang.String">
+            <column name="First_Name" />
+        </property>
+        <property name="lastName" type="java.lang.String">
+            <column name="Last_Name" />
+        </property>
+        <property name="emailAddress" type="java.lang.String">
+            <column name="Email_Address" />
+        </property>
+        <property name="lastPassChange" type="java.util.Date">
+            <column name="Last_Pass_Change" />
+        </property>
+    </class>
+    
+    <class name="org.maryea.billing.model.Account" table="Accounts">
+    	<id name="id" type="int">
+    		<column name="Account_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="firstName1" type="java.lang.String">
+    		<column name="First_Name_1" />
+    	</property>
+    	<property name="firstName2" type="java.lang.String">
+    		<column name="First_Name_2" />
+    	</property>
+    	<property name="lastName1" type="java.lang.String">
+    		<column name="Last_Name_1" />
+    	</property>
+    	<property name="lastName2" type="java.lang.String">
+    		<column name="Last_Name_2" />
+    	</property>
+    	<property name="cellPhone" type="java.lang.String">
+    		<column name="Cell_Phone" />
+    	</property>
+    	<property name="homePhone" type="java.lang.String">
+    		<column name="Home_Phone" />
+    	</property>
+    	<property name="balance" type="double">
+    		<column name="Balance" />
+    	</property>
+    	<one-to-one name="address" class="org.maryea.billing.model.Address" />
+    	<set name="children" cascade="save-update">
+    		<key column="Account_ID" />
+    		<one-to-many class="org.maryea.billing.model.Child" />
+    	</set>
+    	<set name="payers" cascade="save-update">
+    		<key column="Account_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payer" />
+    	</set>
+    	<set name="payments" cascade="save-update">
+    		<key column="Account_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set>
+    </class>
+    
+    <class name="org.maryea.billing.model.Payer" table="Payers">
+    	<id name="id" type="int">
+    		<column name="Payer_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="firstName" type="java.lang.String">
+    		<column name="First_Name" />
+    	</property>
+    	<property name="lastName" type="java.lang.String">
+    		<column name="Last_Name" />
+    	</property>
+    	<property name="homePhone" type="java.lang.String">
+    		<column name="Home_Phone" />
+    	</property>
+    	<property name="cellPhone" type="java.lang.String">
+    		<column name="Cell_Phone" />
+    	</property>
+    	<set name="payments" cascade="save-update">
+    		<key column="Payer_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set>
+    </class>
+    
+    <class name="org.maryea.billing.model.Child" table="Children">
+    	<id name="id" type="int">
+    		<column name="Child_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="firstName" type="java.lang.String">
+    		<column name="First_Name" />
+    	</property>
+    	<property name="lastName" type="java.lang.String">
+    		<column name="Last_Name" />
+    	</property>
+    	<property name="balance" type="double">
+    		<column name="Balance" />
+    	</property>
+    	<set name="payments" cascade="save-update">
+    		<key column="Child_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set>
+    </class>
+    
+    <class name="org.maryea.billing.model.Address" table="Addresses">
+    	<id name="id" type="int">
+    		<column name="Address_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="address" type="java.lang.String">
+    		<column name="Address" />
+    	</property>
+    	<property name="city" type="java.lang.String">
+    		<column name="City" />
+    	</property>
+    	<property name="state" type="java.lang.String">
+    		<column name="State" />
+    	</property>
+    	<property name="zipCode" type="java.lang.String">
+    		<column name="Zip_Code" />
+    	</property>
+    </class>
+    
+    <class name="org.maryea.billing.model.Payment" table="Payments">
+    	<id name="id" type="int">
+    		<column name="Payment_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="date" type="java.util.Date">
+    		<column name="Date_Paid" />
+    	</property>
+    	<property name="amountPaid" type="double">
+    		<column name="Amount_Paid" />
+    	</property>
+    	<property name="balance" type="double">
+    		<column name="Balance" />
+    	</property>
+    	<property name="isCash" type="boolean">
+    		<column name="Cash" />
+    	</property>
+    	<property name="checkNumber" type="int">
+    		<column name="Check_Number" />
+    	</property>
+    	<set name="payments" cascade="save-update">
+    		<key column="Payment_ID_Ref" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set> 
+    </class>
+</hibernate-mapping>

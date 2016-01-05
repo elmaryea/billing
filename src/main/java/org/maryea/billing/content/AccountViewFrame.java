@@ -62,11 +62,7 @@ public class AccountViewFrame extends JInternalFrame implements ComponentListene
 	}
 	
 	public void componentShown(ComponentEvent e){
-		
 	}
-	
 	public void componentHidden(ComponentEvent e){
-		
 	}
-
 }

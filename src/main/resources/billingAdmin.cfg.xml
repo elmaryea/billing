@@ -8,6 +8,6 @@
   <property name="hibernate.connection.url">jdbc:mysql://billingdb.cdejpw8ghibw.us-east-1.rds.amazonaws.com:3306/billing</property>
   <property name="hibernate.connection.username">billingSQLUser</property>
   <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-  <mapping resource="User.hbm.xml" />
+  <mapping resource="Mapping.hbm.xml" />
  </session-factory>
 </hibernate-configuration>

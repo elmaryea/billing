@@ -1,56 +1,74 @@
 package org.maryea.billing.model;
 
 import java.util.Date;
+import java.util.Set;
 
 public class Payment{
   public static final boolean CASH = false;
   public static final boolean CHECK = true;
 
-  //private boolean type;
+  private int id, checkNumber;
   private Date date;
-  private double amount, resultingBalance;
-  //private int checkNumber;
-    
-  public Payment(Date date, double amount, boolean type, double balance){
-    this.date = date;
-    this.amount = amount;
-    //this.type = type;
-    resultingBalance = balance;
+  private double amountPaid, balance;
+  private boolean isCash;
+  private Set<Payment> payments;
+  
+  public Payment(){
   }
-
-  public Payment(Date date, double amount, boolean type, double balance, int checkNumber){
-    this.date = date;
-    this.amount = amount;
-    //this.type = type;;
-    //this.checkNumber = checkNumber;
-    resultingBalance = balance;
+  
+  public double getAmountPaid(){
+  	return amountPaid;
   }
-
-  public void setBalance(int b){
-    resultingBalance = b;
+  
+  public double getBalance(){
+  	return balance;
   }
-
-  public void setAmount(int amount){
-    this.amount = amount;
+  
+  public int getCheckNumber(){
+  	return checkNumber;
   }
-
-  public void setDate(Date date){
-    this.date = date;
-  }
-
-  public void setPaymentType(boolean type){
-    //this.type = type;
-  }
-
-  public double getAmount(){
-    return amount;
-  }
-
-public double getBalance(){
-    return resultingBalance;
-}
-
+  
   public Date getDate(){
-    return date;
+  	return date;
+  }
+  
+  public int getId(){
+  	return id;
+  }
+  
+  public boolean getIsCash(){
+  	return isCash;
+  }
+  
+  public Set<Payment> getPayments(){
+  	return payments;
+  }
+  
+  public void setAmountPaid(double amount){
+  	amountPaid = amount;
+  }
+  
+  public void setBalance(double balance){
+  	this.balance = balance;
+  }
+  
+  public void setCheckNumber(int number){
+  	checkNumber = number;
+  }
+  
+  public void setDate(Date date){
+  	this.date = date;
+  }
+  
+  public void setId(int id){
+  	this.id = id;
+  }
+  
+  public void setIsCash(boolean isCash){
+  	this.isCash = isCash;
+  }
+  
+  public void setPayments(Set<Payment> payments){
+  	this.payments = payments;
   }
 }

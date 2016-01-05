@@ -1,44 +1,60 @@
 package org.maryea.billing.model;
 
-import java.util.Vector;
+import java.util.Set;
 
 public class Payer{
-  String firstName, lastName;
-  int phone;
-  Address address;
-  Vector<Payment> payments;
+  private int id;
+  private String firstname, lastName, homePhone, cellPhone;
+  private Set<Payment> payments;
   
-  public Payer(String first, String last){
-    firstName = first;
-    lastName = last;
-    payments = new Vector<Payment>();
+  public Payer(){
   }
   
-  public void addPayment(Payment p){
-    payments.add(p);
+  public String getCellPhone(){
+  	return cellPhone;
   }
-
+  
   public String getFirstName(){
-    return firstName;
+  	return firstname;
   }
-
+  
+  public String getHomePhone(){
+  	return homePhone;
+  }
+  
+  public int getId(){
+  	return id;
+  }
+  
   public String getLastName(){
-    return lastName;
-  }
-
-  public Payment getPayment(int n){
-    return payments.get(n);
+  	return lastName;
   }
   
-  public int getPhone(){
-    return phone;
+  public Set<Payment> getPayments(){
+  	return payments;
   }
   
-  public void setAddress(Address address){
-    this.address = address;
+  public void setCellPhone(String phone){
+  	cellPhone = phone;
   }
   
-  public void setPhoneNumber(int number){
-    phone = number;
+  public void setFirstName(String name){
+  	firstname = name;
+  }
+  
+  public void setHomePhone(String phone){
+  	homePhone = phone;
+  }
+  
+  public void setLastName(String name){
+  	lastName = name;
+  }
+  
+  public void setId(int id){
+  	this.id = id;
+  }
+  
+  public void setPayments(Set<Payment> payments){
+  	this.payments = payments;
   }
 }

@@ -59,7 +59,7 @@ public class AccountListPanel extends JTable{
 		Vector<Object> row = new Vector<Object>();
 		JTable childTable, payerTable;
 
-		for(Account a : accounts){
+		/*for(Account a : accounts){
 			account.add(a.getName());
 
 			for(Child c : a.getChildren()){
@@ -77,7 +77,7 @@ public class AccountListPanel extends JTable{
 			balance.add(a.getBalance());
 
 			row.add(new Vector<Object>(Arrays.asList(a.getName(), childTable, payerTable, a.getBalance())));
-		}
+		}*/
 		tableModel = new TableModel(row, COLUMN_NAMES);
 		setModel(tableModel);
 

@@ -21,19 +21,17 @@ import org.hibernate.cfg.Configuration;
 public class MainModel{
 	private final File CREDENTIAL_FILE = new File("src/main/resources/credentials.pass");
 
-	private Account currentAccount;
 	private AccountListPanel accountListPanel;
 	private AccountViewPanel accountViewPanel;
 	private BillingWindow billingWindow;
 	private BillViewPanel billViewPanel;
-	private Child currentChild;
 	private File currentFile;
 	private OverviewPanel overviewPanel;
 	private Payer currentPayer;
 	private SessionFactory sessionFactory;
 	private String osName;
 	private User currentUser;
-	private Vector<Account> accounts;
+	private List<Account> accounts;
 	private List<User> users;
 	
 
@@ -49,16 +47,7 @@ public class MainModel{
 	public void addAccount(Account account){
 		accounts.add(account);
 	}
-	public void addChild(Child child){
-		if(currentAccount != null){
-			currentAccount.addChild(child);
-		}
-	}
-	public void addPayer(Payer payer){
-		if(currentAccount != null){
-			currentAccount.addPayer(payer);
-		}
-	}
+
 	public boolean checkFilePass(File toOpen){
 		File checkFile = new File("src/main/resources/" + currentUser.getUsername() + ".cred");
 		try{
@@ -90,12 +79,7 @@ public class MainModel{
 	public BillingWindow getBillingWindow(){
 		return billingWindow;
 	}
-	public Account getCurrentAccount(){
-		return currentAccount;
-	}
-	public Child getCurrentChild(){
-		return currentChild;
-	}
+
 	public File getCurrentFile(){
 		return currentFile;
 	}
@@ -133,8 +117,6 @@ public class MainModel{
 		currentUser = null;
 		currentFile = null;
 		currentPayer = null;
-		currentChild = null;
-		currentAccount = null;
 		accounts = null;
 	}
 	public void setWorkingScreen(String name){
@@ -156,7 +138,6 @@ public class MainModel{
 			}
 
 			accounts = AccountHandler.loadAccounts(sessionFactory);
-			accountListPanel.loadTable(accounts);
 			billingWindow.getDesktop().placeComponents();
 			billingWindow.getRibbon().enableButton("Add User Privilege");
 			billingWindow.getRibbon().enableButton("New Account");

@@ -56,11 +56,7 @@ public class OverviewFrame extends JInternalFrame implements ComponentListener{
 	}
 	
 	public void componentShown(ComponentEvent e){
-		
 	}
-	
 	public void componentHidden(ComponentEvent e){
-		
 	}
-
 }

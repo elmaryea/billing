@@ -1,72 +1,113 @@
 package org.maryea.billing.model;
 
-import java.util.Vector;
+import java.util.Set;
 
 public class Account{
-    private String name;
-    private Vector<Child> children;
-    private Vector<Payer> payers;
-	private Vector<Payment> payments;
+    private int id;
+    private String firstName1, firstName2, lastName1, lastName2, homePhone, cellPhone;
+    private Address address;
     private double balance;
+    private Set<Child> children;
+    private Set<Payment> payments;
+    private Set<Payer> payers;
     
-    public Account(String n, double b){
-        name = n;
-        balance = b;
-		children = new Vector<Child>();
-		payments = new Vector<Payment>();
-		payers = new Vector<Payer>();
-    }
-
-    public void addChild(Child child){
-        children.add(child);
+    public Account(){
     }
     
-    public void addPayer(Payer payer){
-        payers.add(payer);
+    public Address getAddress(){
+    	return address;
     }
     
-    public void addPayment(Payment payment){
-        payments.add(payment);
-    }
-
-    public void setBalance(double amount){
-        balance = amount;
-    }
-    
-	public void addToBalance(double amount){
-		balance+=amount;
-	}
-
     public double getBalance(){
-        return balance;
-    }
-
-    public Vector<Child> getChildren(){
-        return children;
-    }
-
-    public String getName(){
-        return name;
-    }
-	
-	public Vector<Payer> getPayers(){
-		return payers;
-	}
-	
-    public void removePayer(Payer payer){
-        payers.remove(payer);
+    	return balance;
     }
     
-    public void removeChild(Child child){
-        children.remove(child);
+    public String getCellPhone(){
+    	return cellPhone;
     }
-
-    public void setChildren(Vector<Child> children){
-        this.children = children;
+    
+    public Set<Child> getChildren(){
+    	return children;
     }
-
-    public void setPayers(Vector<Payer> payers){
-        this.payers = payers;
+    
+    public String getFirstName1(){
+    	return firstName1;
+    }
+    
+    public String getFirstName2(){
+    	return firstName2;
+    }
+    
+    public String getHomePhone(){
+    	return homePhone;
+    }
+    
+    public String getLastName1(){
+    	return lastName1;
+    }
+    
+    public String getLastName2(){
+    	return lastName2;
+    }
+    
+    public int getId(){
+    	return id;
+    }
+    
+    public Set<Payer> getPayers(){
+    	return payers;
+    }
+    
+    public Set<Payment> getPayments(){
+    	return payments;
+    }
+    
+    public void setAddress(Address address){
+    	this.address = address;
+    }
+    
+    public void setBalance(double balance){
+    	this.balance = balance;
+    }
+    
+    public void setCellPhone(String phone){
+    	cellPhone = phone;
+    }
+    
+    public void setChildren(Set<Child> children){
+    	this.children = children;
+    }
+    
+    public void setFirstName1(String name){
+    	firstName1 = name;
+    }
+    
+    public void setFirstName2(String name){
+    	firstName2 = name;
+    }
+    
+    public void setHomePhone(String phone){
+    	homePhone = phone;
+    }
+    
+    public void setId(int id){
+    	this.id = id;
+    }
+    
+    public void setLastName1(String name){
+    	lastName1 = name;
+    }
+    
+    public void setLastName2(String name){
+    	lastName2 = name;
+    }
+    
+    public void setPayers(Set<Payer> payers){
+    	this.payers = payers;
+    }
+    
+    public void setPayments(Set<Payment> payments){
+    	this.payments = payments;
     }
 
 }

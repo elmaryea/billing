@@ -1,55 +1,53 @@
 package org.maryea.billing.model;
 
-import java.util.Vector;
+import java.util.Set;
 
 public class Child{
-  String firstName, lastName;
-  Address address;
-  int[] schedule;
-  double balance;
-  Vector<Payment> payments;
+  public int id;
+  public String firstName, lastName;
+  public double balance;
+  public Set<Payment> payments;
   
-  public Child(String first, String last, double balance){//, Address address){
-    firstName = first;
-    lastName = last;
-    //this.address = address; 
-    schedule = new int[5];
-    this.balance = balance;
-    payments = new Vector<Payment>();
+  public Child(){
   }
   
-  public void addPayment(Payment p){
-    payments.add(p);
+  public double getBalance(){
+  	return balance;
   }
   
   public String getFirstName(){
-    return firstName;
+  	return firstName;
   }
+  
+  public int getId(){
+  	return id;
+  }
+  
   public String getLastName(){
-    return lastName;
+  	return lastName;
   }
   
-  public Address getAddress(){
-    return address;
+  public Set<Payment> getPayments(){
+  	return payments;
   }
   
-  public int[] getSchedule(){
-    return schedule;
-  }
-
-  public double getBalance(){
-    return balance;
+  public void setBalance(double balance){
+  	this.balance = balance;
   }
   
-  public void setBalance(int balance){
-    this.balance = balance;
+  public void setFirstName(String name){
+  	firstName = name;
   }
-
-  public void setSchedule(int[] schedule){
-    this.schedule = schedule;
+  
+  public void setId(int id){
+  	this.id = id;
   }
-
-  public void updateSchedule(int day, int hours){
-    schedule[day] = hours;
+  
+  public void setLastName(String name){
+  	lastName = name;
+  }
+  
+  public void setPayments(Set<Payment> payments){
+  	this.payments = payments;
   }
 }
