@@ -23,12 +23,6 @@ public class ResetPasswordPanel extends JPanel{
 
 		add(user);
 		add(username);
-
-		layoutForm();
-	}
-
-	public void layoutForm(){
-		
 	}
 
 	public String getUsername(){

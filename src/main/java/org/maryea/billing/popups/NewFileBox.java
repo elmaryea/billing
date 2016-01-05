@@ -14,7 +14,6 @@ public class NewFileBox{
 			fileName = UserHandler.createDatabase(m.getSF(), m.getCurrentUser().getUsername(), newFile.getName().replaceFirst("[.][^.]+$", ""));
 			UserHandler.createCheckFile(m.getCurrentUser().getUsername(), newFile.getName().replaceFirst("[.][^.]+$", ""));
 			try{
-				//File checkFile = new File("src/com/resources/usr/" + bw.getUser().getUsername() + ".cred");
 				FileWriter out = new FileWriter(newFile, true);
 				out.write(fileName + "\n");
 				out.close();

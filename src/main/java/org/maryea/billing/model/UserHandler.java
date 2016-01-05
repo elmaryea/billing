@@ -34,7 +34,8 @@ public class UserHandler{
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
-			String query = "GRANT SELECT,INSERT,DELETE,DROP,ALTER,UPDATE ON " + fileName + ".* TO '" + username + "'";
+			String query = "INSERT INTO User_Business (Business_ID, User_ID) SELECT Business_ID, User_ID FROM "
+					+ "Businesses b INNER JOIN Users u WHERE b.Business_Name = '" + fileName + "' AND u.Username = '" + username + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(query);
 			sqlQuery.executeUpdate();
 			tx.commit();
@@ -46,6 +47,7 @@ public class UserHandler{
 		}finally{
 			session.close();
 		}
+		
 	}
 
 	public static void changePassword(String username, String hash){
@@ -200,7 +202,8 @@ public class UserHandler{
 		Transaction tx = null;
 		try{
 			tx = session.beginTransaction();
-			String query = "SELECT Business_Name FROM Businesses JOIN User_Business ON Businesses.Business_ID=User_Business.Business_ID JOIN Users ON User_Business.User_ID=Users.User_ID WHERE Business_Name = '" + testName + "'";
+			String query = "SELECT Business_Name FROM Businesses JOIN User_Business ON Businesses.Business_ID=User_Business.Business_ID "
+					+ "JOIN Users ON User_Business.User_ID=Users.User_ID WHERE Business_Name = '" + testName + "'";
 			SQLQuery sqlQuery = session.createSQLQuery(query);
 			List<Object> results = sqlQuery.list();
 			ret = !results.isEmpty();
@@ -295,6 +298,28 @@ public class UserHandler{
 	    	System.out.println("There was an error sending the password reset email.");
 	    	e.printStackTrace();
 	    }
+	}
+	
+	public static void updateCheckFile(String fileName, String username){
+		File checkFile = new File("src/main/resources/" + username + ".cred");
+		if(!checkFile.exists()){
+			try{
+				checkFile.createNewFile();
+			}catch(Exception e){
+				System.out.println("Error creating check file.");
+				e.printStackTrace();
+			}
+		}
+		if(!fileName.equals("")){
+			try{
+				FileWriter out = new FileWriter(checkFile.getPath(), true);
+				out.write(fileName + ".bil\n");
+				out.close();
+			}catch(Exception e){
+				System.out.println("Error writing to check file.");
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static boolean userExists(String username){

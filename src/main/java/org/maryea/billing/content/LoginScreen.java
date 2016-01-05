@@ -7,6 +7,7 @@ import org.hibernate.Transaction;
 import org.maryea.billing.model.UserHandler;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
@@ -103,12 +104,12 @@ public class LoginScreen extends JPanel{
 			Transaction tx = null;
 			try{
 				tx = session.beginTransaction();
-				String stmt = "SELECT lastProgramOpen FROM billingAdmin.users WHERE username='" + user + "'";
+				String stmt = "SELECT Last_Program_Open FROM Users WHERE Username='" + user + "'";
 				SQLQuery query = session.createSQLQuery(stmt);
 				List<Object> results = query.list();
 				if(!results.isEmpty()){
 					String dbName = (String)results.get(0);
-					billingWindow.getModel().setWorkingScreen(dbName);
+					billingWindow.getModel().openFile(new File(dbName));
 				}
 				tx.commit();
 			}catch(HibernateException h){

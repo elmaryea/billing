@@ -149,7 +149,7 @@ public class MainModel{
 			Scanner scan = new Scanner(file);
 			String name = scan.nextLine();
 			scan.close();
-			setWorkingScreen(name);
+			setWorkingScreen(file.getAbsolutePath());
 		}catch(Exception e){
 			System.out.println("There was an error opening the file.");
 			e.printStackTrace();
