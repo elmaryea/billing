@@ -62,5 +62,6 @@
 	<classpathentry kind="lib" path="lib/osgi/geronimo-jta_1.1_spec-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/osgi/org.osgi.compendium-4.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/osgi/org.osgi.core-4.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/eric/Downloads/designgridlayout-1.11.jar" sourcepath="/home/eric/Downloads/designgridlayout-1.11-sources.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -166,4 +166,10 @@ public class LoginScreen extends JPanel{
 		billingWindow.getDesktop().setVisible(true);
 		billingWindow.getDesktop().setEnabled(true);
 	}
+	
+	public void testAutoLogin(){
+		loginName.setText("elm101");
+		passwordField.setText("test1");
+		checkLoginAction();
+	}
 }

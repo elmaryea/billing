@@ -2,7 +2,6 @@ package org.maryea.billing.content;
 
 import org.maryea.billing.model.MainModel;
 import org.maryea.billing.popups.ChangePasswordBox;
-import org.maryea.billing.popups.CreateAccountBox;
 import org.maryea.billing.popups.CreateUserBox;
 import org.maryea.billing.popups.NewFileBox;
 import org.maryea.billing.popups.NewPaymentBox;
@@ -21,7 +20,6 @@ public class BillingWindow extends JRibbonFrame{
 
 	private static final long serialVersionUID = -6431594020696819995L;
 	private ChangePasswordBox changePasswordBox;
-	private CreateAccountBox createAccountBox;
 	private CreateUserBox createUserBox;
 	private Desktop desktop;
 	private LoginScreen loginScreen;
@@ -62,6 +60,8 @@ public class BillingWindow extends JRibbonFrame{
 
 		loginScreen.setVisible(true);
 		loginScreen.setFocus();
+		
+		loginScreen.testAutoLogin();
 	}
 	public Desktop getDesktop(){
 		return desktop;
@@ -77,9 +77,6 @@ public class BillingWindow extends JRibbonFrame{
 	}	
 	public void viewChangePasswordBox(){
 		changePasswordBox = new ChangePasswordBox(this);
-	}
-	public void viewCreateAccountBox(){
-		createAccountBox = new CreateAccountBox(this);
 	}
 	public void viewCreateUserBox(){
 		createUserBox = new CreateUserBox(this); 
