@@ -7,6 +7,7 @@ import org.maryea.billing.content.BillViewPanel;
 import org.maryea.billing.content.OverviewPanel;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Vector;
 import java.util.List;
 import java.util.Scanner;
@@ -150,6 +151,8 @@ public class MainModel{
 			String name = scan.nextLine();
 			scan.close();
 			setWorkingScreen(file.getAbsolutePath());
+		}catch(FileNotFoundException f){
+			System.out.println("The file doesn't exist.");
 		}catch(Exception e){
 			System.out.println("There was an error opening the file.");
 			e.printStackTrace();

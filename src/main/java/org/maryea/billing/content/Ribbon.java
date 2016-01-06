@@ -1,5 +1,6 @@
 package org.maryea.billing.content;
 
+import org.maryea.billing.model.AccountHandler;
 import org.maryea.billing.model.UserHandler;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -42,9 +43,7 @@ public class Ribbon extends JRibbon{
 		billingWindow = bw;
 
 		createAppMenu();
-
 		createButtons();
-
 		createRibbonBands();
 
 		JRibbonBand[] accountBands = {accountActionBand, accountAddBand, accountEditBand};
@@ -87,7 +86,7 @@ public class Ribbon extends JRibbon{
 		newAccountBtn = new JCommandButton("New Account", null);
 		newAccountBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				//billingWindow.viewCreateAccountBox();
+				AccountHandler.addAccount(billingWindow);
 			}
 		});
 		commandButtons.add(newAccountBtn);
@@ -105,7 +104,7 @@ public class Ribbon extends JRibbon{
 			public void actionPerformed(ActionEvent e){
 				int result = JOptionPane.showConfirmDialog(billingWindow, "Are you sure you want to remove this account?", "Remove Account", JOptionPane.YES_NO_OPTION);
 				if(result == 0){
-					//billingWindow.getDesktop().removeAccount();
+					
 				}
 			}
 		});
@@ -177,7 +176,7 @@ public class Ribbon extends JRibbon{
 				if(billingWindow.getModel().saveOption()){
 					billingWindow.getModel().closeFile();
 				}
-				//billingWindow.viewNewFileBox();
+				billingWindow.viewNewFileBox();
 			}
 		});
 		commandButtons.add(newBusinessBtn);

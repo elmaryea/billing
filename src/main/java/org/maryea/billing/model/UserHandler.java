@@ -28,7 +28,6 @@ public class UserHandler{
 	private static String EMAIL_SUBJECT = "Billing Program Password Reset";
 	private static String EMAIL_BODY = "Your temporary password is ";
 
-	//TODO: Update so that it adds into User_Business table
 	public static void addUserPrivilege(String fileName, String username, SessionFactory factory){
 		Session session = factory.openSession();
 		Transaction tx = null;
