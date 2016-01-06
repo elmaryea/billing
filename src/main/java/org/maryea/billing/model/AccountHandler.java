@@ -1,5 +1,6 @@
 package org.maryea.billing.model;
 
+import java.util.List;
 import java.util.Vector;
 import org.maryea.billing.content.BillingWindow;
 import org.maryea.billing.popups.NewAccountBox;
@@ -15,5 +16,12 @@ public class AccountHandler{
 	public static Vector<Account> loadAccounts(SessionFactory factory){
 		Vector<Account> accounts = new Vector<Account>();
 		return accounts;
+	}
+	
+	public static void persistNewAccount(BillingWindow bw){
+		Account account = newAccountBox.getAccount();
+		List<Child> children = newAccountBox.getChildren();
+		List<Payer> payers = newAccountBox.getPayers();
+		
 	}
 }

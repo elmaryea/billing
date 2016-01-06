@@ -4,10 +4,17 @@ import java.util.Set;
 
 public class Payer{
   private int id;
-  private String firstname, lastName, homePhone, cellPhone;
+  private String firstName, lastName, homePhone, cellPhone;
   private Set<Payment> payments;
   
   public Payer(){
+  }
+  
+  public Payer(String fn, String ln, String hp, String cp){
+  	firstName = fn;
+  	lastName = ln;
+  	homePhone = hp;
+  	cellPhone = cp;
   }
   
   public String getCellPhone(){
@@ -15,7 +22,7 @@ public class Payer{
   }
   
   public String getFirstName(){
-  	return firstname;
+  	return firstName;
   }
   
   public String getHomePhone(){
@@ -39,7 +46,7 @@ public class Payer{
   }
   
   public void setFirstName(String name){
-  	firstname = name;
+  	firstName = name;
   }
   
   public void setHomePhone(String phone){

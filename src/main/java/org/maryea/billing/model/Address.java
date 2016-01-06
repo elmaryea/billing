@@ -7,6 +7,13 @@ public class Address{
 	public Address(){
 	}
 	
+	public Address(String str, String ci, String st, String zp){
+		address = str;
+		city = ci;
+		state = st;
+		zipCode = zp;
+	}
+	
 	public String getAddress(){
 		return address;
 	}

@@ -14,6 +14,17 @@ public class Account{
     public Account(){
     }
     
+    public Account(String fn1, String ln1, String fn2, String ln2, String street, String city, String state, String zipCode, String hp, String cp){
+    	balance = 0.0;
+    	firstName1 = fn1;
+    	lastName1 = ln1;
+    	firstName2 = fn2;
+    	lastName2 = ln2;
+    	homePhone = hp;
+    	cellPhone = cp;
+    	address = new Address(street, city, state, zipCode);
+    }
+    
     public Address getAddress(){
     	return address;
     }

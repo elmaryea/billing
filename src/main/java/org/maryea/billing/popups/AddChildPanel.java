@@ -62,6 +62,7 @@ public class AddChildPanel extends JPanel implements TableModelListener, ActionL
 		
 		
 		add.addActionListener(this);
+		delete.addActionListener(this);
 		model.addTableModelListener(this);
 		
 		table.setFillsViewportHeight(true);
@@ -71,7 +72,7 @@ public class AddChildPanel extends JPanel implements TableModelListener, ActionL
 		return cancel;
 	}
 	
-	public String[][] getData(){
+	public String[][] getResults(){
 		String[][] results = new String[model.getRowCount()][model.getColumnCount()];
 		for(int i = 0; i < model.getRowCount(); i++){
 			for(int j = 0; j < model.getColumnCount(); j++){

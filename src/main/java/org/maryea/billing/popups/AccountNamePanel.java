@@ -135,7 +135,7 @@ public class AccountNamePanel extends JPanel implements KeyListener{
 		return next;
 	}
 	
-	public LinkedList<String> getText(){
+	public LinkedList<String> getResults(){
 		LinkedList<String> results = new LinkedList<String>();
 		results.add(firstName1.getText());
 		results.add(lastName1.getText());

@@ -11,6 +11,12 @@ public class Child{
   public Child(){
   }
   
+  public Child(String fn, String ln){
+  	firstName = fn;
+  	lastName = ln;
+  	balance = 0.0;
+  }
+  
   public double getBalance(){
   	return balance;
   }
