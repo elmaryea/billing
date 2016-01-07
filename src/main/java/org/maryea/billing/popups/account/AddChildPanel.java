@@ -1,4 +1,4 @@
-package org.maryea.billing.popups;
+package org.maryea.billing.popups.account;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

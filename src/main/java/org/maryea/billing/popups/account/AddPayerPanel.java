@@ -1,4 +1,4 @@
-package org.maryea.billing.popups;
+package org.maryea.billing.popups.account;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +19,7 @@ import org.maryea.billing.model.JTextFieldDigitLimit;
 
 public class AddPayerPanel extends JPanel implements TableModelListener, ActionListener{
 	private static final long serialVersionUID = -3629578543354896633L;
-	private DefaultTableModel model;
+	private PayerTableModel model;
 	private JButton add, delete, cancel, next, finish;
 	private JLabel header, fn, ln, hp, cp;
 	private JScrollPane scrollPane;
@@ -48,11 +48,7 @@ public class AddPayerPanel extends JPanel implements TableModelListener, ActionL
 			input[0][3] = initialAccount.get(5);//cell
 		}
 		Object[] columns = {"First Name", "Last Name", "Home Phone", "Cell Phone"};
-		model = new DefaultTableModel(input, columns){
-			public int getColumnCount(){
-				return 2;
-			}
-		};
+		model = new PayerTableModel(input, columns);
 		
 		table = new JTable(model){
 			private static final long serialVersionUID = -75073715402777940L;
@@ -80,8 +76,8 @@ public class AddPayerPanel extends JPanel implements TableModelListener, ActionL
 		header = new JLabel("Enter payer information below:");
 		fn = new JLabel("First Name:");
 		ln = new JLabel("Last Name:");
-		hp = new JLabel("Cell phone:");
-		cp = new JLabel("Home phone:");
+		hp = new JLabel("Home phone:");
+		cp = new JLabel("Cell phone:");
 		firstName = new JTextField(17);
 		lastName = new JTextField(17);
 		homePhoneArea = new JTextField(4);
@@ -154,9 +150,9 @@ public class AddPayerPanel extends JPanel implements TableModelListener, ActionL
 		return finish;
 	}
 	public String[][] getResults(){
-		String[][] results = new String[model.getRowCount()][model.getColumnCount()];
+		String[][] results = new String[model.getRowCount()][model.getDataColumns()];
 		for(int i = 0; i < model.getRowCount(); i++){
-			for(int j = 0; j < model.getColumnCount(); j++){
+			for(int j = 0; j < model.getDataColumns(); j++){
 				results[i][j] = (String)model.getValueAt(i, j);
 			}
 		}

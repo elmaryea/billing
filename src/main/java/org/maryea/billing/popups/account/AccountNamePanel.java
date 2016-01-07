@@ -1,4 +1,4 @@
-package org.maryea.billing.popups;
+package org.maryea.billing.popups.account;
 
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
@@ -85,7 +85,7 @@ public class AccountNamePanel extends JPanel implements KeyListener{
 		cellPhoneArea.addKeyListener(this);
 		cellPhone3.addKeyListener(this);
 		
-		setPreferredSize(new Dimension(650, 500));
+		setPreferredSize(new Dimension(650, 650));
 		setLayout(layout);
 		
 		add(cancel);

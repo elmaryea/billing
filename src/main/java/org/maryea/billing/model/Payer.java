@@ -6,6 +6,7 @@ public class Payer{
   private int id;
   private String firstName, lastName, homePhone, cellPhone;
   private Set<Payment> payments;
+  private Account account;
   
   public Payer(){
   }
@@ -15,6 +16,10 @@ public class Payer{
   	lastName = ln;
   	homePhone = hp;
   	cellPhone = cp;
+  }
+  
+  public Account getAccount(){
+  	return account;
   }
   
   public String getCellPhone(){
@@ -39,6 +44,10 @@ public class Payer{
   
   public Set<Payment> getPayments(){
   	return payments;
+  }
+  
+  public void setAccount(Account account){
+  	this.account = account;
   }
   
   public void setCellPhone(String phone){

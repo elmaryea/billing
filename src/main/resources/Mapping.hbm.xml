@@ -56,11 +56,11 @@
     		<key column="Account_ID" />
     		<one-to-many class="org.maryea.billing.model.Child" />
     	</set>
-    	<set name="payers" cascade="save-update">
+    	<set name="payers" inverse="true">
     		<key column="Account_ID" />
     		<one-to-many class="org.maryea.billing.model.Payer" />
     	</set>
-    	<set name="payments" cascade="save-update">
+    	<set name="payments" inverse="true" table="Accounts">
     		<key column="Account_ID" />
     		<one-to-many class="org.maryea.billing.model.Payment" />
     	</set>
@@ -87,6 +87,9 @@
     		<key column="Payer_ID" />
     		<one-to-many class="org.maryea.billing.model.Payment" />
     	</set>
+    	<many-to-one name="account" class="org.maryea.billing.model.Account" fetch="select">
+    		<column name="Account_ID" not-null="true" />
+    	</many-to-one>
     </class>
     
     <class name="org.maryea.billing.model.Child" table="Children">
@@ -107,6 +110,9 @@
     		<key column="Child_ID" />
     		<one-to-many class="org.maryea.billing.model.Payment" />
     	</set>
+    	<many-to-one name="account" class="org.maryea.billing.model.Account" fetch="select">
+    		<column name="Account_ID" not-null="true" />
+    	</many-to-one>
     </class>
     
     <class name="org.maryea.billing.model.Address" table="Addresses">
@@ -152,5 +158,22 @@
     		<key column="Payment_ID_Ref" />
     		<one-to-many class="org.maryea.billing.model.Payment" />
     	</set> 
+    	<many-to-one name="account" class="org.maryea.billing.model.Account" fetch="select">
+    		<column name="Account_ID" not-null="true" />
+    	</many-to-one>
+    </class>
+    
+    <class name="org.maryea.billing.model.Business" table="Businesses">
+    	<id name="id" type="int">
+    		<column name="Business_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="businessName" type="java.lang.String">
+    		<column name="Business_Name" />
+    	</property>
+    	<set name="accounts" cascade="save-update">
+    		<key column="Business_ID" />
+    		<one-to-many class="org.maryea.billing.model.Account" />
+    	</set>
     </class>
 </hibernate-mapping>

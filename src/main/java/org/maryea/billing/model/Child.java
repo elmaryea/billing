@@ -3,10 +3,11 @@ package org.maryea.billing.model;
 import java.util.Set;
 
 public class Child{
-  public int id;
-  public String firstName, lastName;
-  public double balance;
-  public Set<Payment> payments;
+  private int id;
+  private String firstName, lastName;
+  private double balance;
+  private Set<Payment> payments;
+  private Account account;
   
   public Child(){
   }
@@ -15,6 +16,10 @@ public class Child{
   	firstName = fn;
   	lastName = ln;
   	balance = 0.0;
+  }
+  
+  public Account getAccount(){
+  	return account;
   }
   
   public double getBalance(){
@@ -35,6 +40,10 @@ public class Child{
   
   public Set<Payment> getPayments(){
   	return payments;
+  }
+  
+  public void setAccount(Account account){
+  	this.account = account;
   }
   
   public void setBalance(double balance){
