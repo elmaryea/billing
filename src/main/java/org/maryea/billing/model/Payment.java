@@ -12,8 +12,15 @@ public class Payment{
   private double amountPaid, balance;
   private boolean isCash;
   private Set<Payment> payments;
+  private Account account;
+  private Payer payer;
+  private Child child;
   
   public Payment(){
+  }
+  
+  public Account getAccount(){
+  	return account;
   }
   
   public double getAmountPaid(){
@@ -28,6 +35,10 @@ public class Payment{
   	return checkNumber;
   }
   
+  public Child getChild(){
+  	return child;
+  }
+  
   public Date getDate(){
   	return date;
   }
@@ -40,8 +51,16 @@ public class Payment{
   	return isCash;
   }
   
+  public Payer getPayer(){
+  	return payer;
+  }
+  
   public Set<Payment> getPayments(){
   	return payments;
+  }
+  
+  public void setAccount(Account account){
+  	this.account = account;
   }
   
   public void setAmountPaid(double amount){
@@ -56,6 +75,10 @@ public class Payment{
   	checkNumber = number;
   }
   
+  public void setChild(Child child){
+  	this.child = child;
+  }
+  
   public void setDate(Date date){
   	this.date = date;
   }
@@ -66,6 +89,10 @@ public class Payment{
   
   public void setIsCash(boolean isCash){
   	this.isCash = isCash;
+  }
+  
+  public void setPayer(Payer payer){
+  	this.payer = payer;
   }
   
   public void setPayments(Set<Payment> payments){

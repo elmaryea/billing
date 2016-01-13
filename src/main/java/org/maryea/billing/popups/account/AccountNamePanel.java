@@ -23,6 +23,7 @@ public class AccountNamePanel extends JPanel implements KeyListener{
 	private final int LINE_PAD = 5;
 	private final int SECTION_PAD = 150;
 	
+	private boolean hadone = false, h3done = false, cadone = false, c3done = false;
 	private JButton cancel, finish, next;
 	private JLabel pa1, pa2, fn1, fn2, ln1, ln2, hp, cp, ad, str, ci, st, zp;
   private JTextField firstName1, firstName2, lastName1, lastName2, homePhoneArea, homePhone3, homePhone4, cellPhoneArea, cellPhone3, cellPhone4, street, city, state, zipCode;
@@ -44,7 +45,7 @@ public class AccountNamePanel extends JPanel implements KeyListener{
 		ln1 = new JLabel("Last Name:");
 		ln2 = new JLabel("Last Name:");
 		hp = new JLabel("Home Phone:");
-		cp = new JLabel("Cell PHone:");
+		cp = new JLabel("Cell Phone:");
 		ad = new JLabel("Address:");
 		str = new JLabel("Street:");
 		ci = new JLabel("City:");
@@ -231,24 +232,28 @@ public class AccountNamePanel extends JPanel implements KeyListener{
 
 	public void keyTyped(KeyEvent e) {
 		if(e.getSource().equals(homePhoneArea)){
-			if(homePhoneArea.getCaretPosition() == 2){
+			if(homePhoneArea.getCaretPosition() == 2 && !hadone){
 				homePhone3.requestFocus();
 				homePhone3.setCaretPosition(0);
+				hadone = true;
 			}
 		}else if(e.getSource().equals(homePhone3)){
-			if(homePhone3.getCaretPosition() == 2){
+			if(homePhone3.getCaretPosition() == 2 && !h3done){
 				homePhone4.requestFocus();
 				homePhone4.setCaretPosition(0);
+				h3done = true;
 			}
 		}else if(e.getSource().equals(cellPhoneArea)){
-			if(cellPhoneArea.getCaretPosition() == 2){
+			if(cellPhoneArea.getCaretPosition() == 2 && !cadone){
 				cellPhone3.requestFocus();
 				cellPhone3.setCaretPosition(0);
+				cadone = true;
 			}
 		}else if(e.getSource().equals(cellPhone3)){
-			if(cellPhone3.getCaretPosition() == 2){
+			if(cellPhone3.getCaretPosition() == 2 && !c3done){
 				cellPhone4.requestFocus();
 				cellPhone4.setCaretPosition(0);
+				c3done = true;
 			}
 		}
 	}

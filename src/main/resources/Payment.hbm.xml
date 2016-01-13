@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="org.maryea.billing.model.Payment" table="Payments">
+    	<id name="id" type="int">
+    		<column name="Payment_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="date" type="java.util.Date">
+    		<column name="Date_Paid" />
+    	</property>
+    	<property name="amountPaid" type="double">
+    		<column name="Amount_Paid" />
+    	</property>
+    	<property name="balance" type="double">
+    		<column name="Balance" />
+    	</property>
+    	<property name="isCash" type="boolean">
+    		<column name="Cash" />
+    	</property>
+    	<property name="checkNumber" type="int">
+    		<column name="Check_Number" />
+    	</property>
+    	<set name="payments" cascade="save-update">
+    		<key column="Payment_ID_Ref" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set> 
+    	<many-to-one name="account" class="org.maryea.billing.model.Account" fetch="select">
+    		<column name="Account_ID" not-null="true" />
+    	</many-to-one>
+    	<many-to-one name="payer" class="org.maryea.billing.model.Payer" fetch="select">
+    		<column name="Payer_ID" not-null="true" />
+    	</many-to-one>
+    	<many-to-one name="child" class="org.maryea.billing.model.Child" fetch="select">
+    		<column name="Child_ID" not-null="true" />
+    	</many-to-one>
+    </class>
+</hibernate-mapping>

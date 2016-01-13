@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Dec 21, 2015 8:12:25 PM by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.maryea.billing.model.Account" table="Accounts">
+    	<id name="id" type="int">
+    		<column name="Account_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="firstName1" type="java.lang.String">
+    		<column name="First_Name_1" />
+    	</property>
+    	<property name="firstName2" type="java.lang.String">
+    		<column name="First_Name_2" />
+    	</property>
+    	<property name="lastName1" type="java.lang.String">
+    		<column name="Last_Name_1" />
+    	</property>
+    	<property name="lastName2" type="java.lang.String">
+    		<column name="Last_Name_2" />
+    	</property>
+    	<property name="cellPhone" type="java.lang.String">
+    		<column name="Cell_Phone" />
+    	</property>
+    	<property name="homePhone" type="java.lang.String">
+    		<column name="Home_Phone" />
+    	</property>
+    	<property name="balance" type="double">
+    		<column name="Balance" />
+    	</property>
+    	<one-to-one name="address" class="org.maryea.billing.model.Address" />
+    	<set name="children" cascade="save-update">
+    		<key column="Account_ID" />
+    		<one-to-many class="org.maryea.billing.model.Child" />
+    	</set>
+    	<set name="payers" inverse="true">
+    		<key column="Account_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payer" />
+    	</set>
+    	<set name="payments" inverse="true" table="Accounts">
+    		<key column="Account_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set>
+    	<many-to-one name="business" class="org.maryea.billing.model.Business" fetch="select">
+    		<column name="Business_ID" not-null="true" />
+    	</many-to-one>
+    </class>
+    
+   
+</hibernate-mapping>

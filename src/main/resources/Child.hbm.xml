@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="org.maryea.billing.model.Child" table="Children">
+    	<id name="id" type="int">
+    		<column name="Child_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="firstName" type="java.lang.String">
+    		<column name="First_Name" />
+    	</property>
+    	<property name="lastName" type="java.lang.String">
+    		<column name="Last_Name" />
+    	</property>
+    	<property name="balance" type="double">
+    		<column name="Balance" />
+    	</property>
+    	<set name="payments" cascade="save-update">
+    		<key column="Child_ID" />
+    		<one-to-many class="org.maryea.billing.model.Payment" />
+    	</set>
+    	<many-to-one name="account" class="org.maryea.billing.model.Account" fetch="select">
+    		<column name="Account_ID" not-null="true" />
+    	</many-to-one>
+    </class>
+</hibernate-mapping>

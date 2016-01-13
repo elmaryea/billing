@@ -10,11 +10,12 @@ public class Account{
     private Set<Child> children;
     private Set<Payment> payments;
     private Set<Payer> payers;
+    private Business business;
     
     public Account(){
     }
     
-    public Account(String fn1, String ln1, String fn2, String ln2, String street, String city, String state, String zipCode, String hp, String cp){
+    public Account(String fn1, String ln1, String fn2, String ln2, String street, String city, String state, String zipCode, String hp, String cp, Business b){
     	balance = 0.0;
     	firstName1 = fn1;
     	lastName1 = ln1;
@@ -23,6 +24,7 @@ public class Account{
     	homePhone = hp;
     	cellPhone = cp;
     	address = new Address(street, city, state, zipCode);
+    	business = b;
     }
     
     public Address getAddress(){
@@ -31,6 +33,10 @@ public class Account{
     
     public double getBalance(){
     	return balance;
+    }
+    
+    public Business getBusiness(){
+    	return business;
     }
     
     public String getCellPhone(){
@@ -79,6 +85,10 @@ public class Account{
     
     public void setBalance(double balance){
     	this.balance = balance;
+    }
+    
+    public void setBusiness(Business business){
+    	this.business = business;
     }
     
     public void setCellPhone(String phone){

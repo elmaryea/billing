@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	 <class name="org.maryea.billing.model.Address" table="Addresses">
+    	<id name="id" type="int">
+    		<column name="Address_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="address" type="java.lang.String">
+    		<column name="Address" />
+    	</property>
+    	<property name="city" type="java.lang.String">
+    		<column name="City" />
+    	</property>
+    	<property name="state" type="java.lang.String">
+    		<column name="State" />
+    	</property>
+    	<property name="zipCode" type="java.lang.String">
+    		<column name="Zip_Code" />
+    	</property>
+    </class>
+</hibernate-mapping>

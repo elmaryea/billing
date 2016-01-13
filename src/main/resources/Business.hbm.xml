@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="org.maryea.billing.model.Business" table="Businesses">
+    	<id name="id" type="int">
+    		<column name="Business_ID" />
+    		<generator class="native" />
+    	</id>
+    	<property name="businessName" type="java.lang.String">
+    		<column name="Business_Name" />
+    	</property>
+    	<set name="accounts" cascade="save-update">
+    		<key column="Business_ID" />
+    		<one-to-many class="org.maryea.billing.model.Account" />
+    	</set>
+    </class>
+</hibernate-mapping>

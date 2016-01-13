@@ -2,6 +2,7 @@ package org.maryea.billing.popups.account;
 
 import java.util.Vector;
 
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
 public class PayerTableModel extends DefaultTableModel{
@@ -26,12 +27,12 @@ public class PayerTableModel extends DefaultTableModel{
 			toAdd.add(row[i]);
 		}
 		data.add(toAdd);
-		fireTableRowsUpdated(0, data.size() - 1);
+		fireTableChanged(new TableModelEvent(this));
 	}
 	
 	public void addRow(Vector row){
 		data.add(row);
-		fireTableRowsUpdated(0, data.size() - 1);
+		fireTableChanged(new TableModelEvent(this));
 	}
 	
 	public Vector<Vector<Object>> getAllData(){

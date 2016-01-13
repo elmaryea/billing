@@ -19,6 +19,7 @@ import org.maryea.billing.model.Payer;
 
 public class NewAccountBox extends JDialog implements ActionListener{
 	private AccountNamePanel accountNamePanel;
+	private Account newAccount;
 	private AddPayerPanel addPayerPanel;
 	private AddChildPanel addChildPanel;
 	private LinkedList<String> initialResults;
@@ -50,6 +51,9 @@ public class NewAccountBox extends JDialog implements ActionListener{
 			if(addChildPanel == null && accountNamePanel.isValidForm()){
 				addChildPanel = new AddChildPanel();
 				initialResults = accountNamePanel.getResults();
+				newAccount = new Account(initialResults.get(0), initialResults.get(1), initialResults.get(2), initialResults.get(3), 
+						initialResults.get(4), initialResults.get(5), initialResults.get(6), initialResults.get(7), initialResults.get(8),
+						initialResults.get(9), bw.getModel().getCurrentBusiness());
 				accountNamePanel.setEnabled(false);
 				accountNamePanel.setVisible(false);
 				add(addChildPanel);
@@ -76,7 +80,7 @@ public class NewAccountBox extends JDialog implements ActionListener{
 						payerResults = addPayerPanel.getResults();
 					}
 				}
-				AccountHandler.persistNewAccount(bw, getAccount(), getChildren(), getPayers());
+				AccountHandler.persistNewAccount(bw, newAccount, getChildren(), getPayers());
 				dispose();
 			}else{
 				JOptionPane.showMessageDialog(this, "Some information is missing.");
@@ -84,16 +88,11 @@ public class NewAccountBox extends JDialog implements ActionListener{
 		}
 	}
 	
-	public Account getAccount(){
-		Account account = new Account(initialResults.get(0), initialResults.get(1), initialResults.get(2), initialResults.get(3), 
-				initialResults.get(4), initialResults.get(5), initialResults.get(6), initialResults.get(7), initialResults.get(8), initialResults.get(9));
-		return account;
-	}
 	public List<Child> getChildren(){
 		List<Child> children = new LinkedList<Child>();
 		Child toAdd;
 		for(int i = 0; i < childResults.length; i++){
-			toAdd = new Child(childResults[i][0], childResults[i][1]);
+			toAdd = new Child(childResults[i][0], childResults[i][1], newAccount);
 			children.add(toAdd);
 		}
 		return children;
@@ -103,7 +102,7 @@ public class NewAccountBox extends JDialog implements ActionListener{
 		List<Payer> payers = new LinkedList<Payer>();
 		Payer toAdd;
 		for(int i = 0; i < payerResults.length; i++){
-			toAdd = new Payer(payerResults[i][0], payerResults[i][1], payerResults[i][2], payerResults[i][3]);
+			toAdd = new Payer(payerResults[i][0], payerResults[i][1], payerResults[i][2], payerResults[i][3], newAccount);
 			payers.add(toAdd);
 		}
 		return payers;

@@ -11,7 +11,8 @@ public class Payer{
   public Payer(){
   }
   
-  public Payer(String fn, String ln, String hp, String cp){
+  public Payer(String fn, String ln, String hp, String cp, Account a){
+  	account = a;
   	firstName = fn;
   	lastName = ln;
   	homePhone = hp;

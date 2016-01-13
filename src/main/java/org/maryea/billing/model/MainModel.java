@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -26,6 +27,7 @@ public class MainModel{
 	private AccountViewPanel accountViewPanel;
 	private BillingWindow billingWindow;
 	private BillViewPanel billViewPanel;
+	private Business currentBusiness;
 	private File currentFile;
 	private OverviewPanel overviewPanel;
 	private Payer currentPayer;
@@ -79,6 +81,10 @@ public class MainModel{
 	}
 	public BillingWindow getBillingWindow(){
 		return billingWindow;
+	}
+	
+	public Business getCurrentBusiness(){
+		return currentBusiness;
 	}
 
 	public File getCurrentFile(){
@@ -146,17 +152,32 @@ public class MainModel{
 	
 	public void openFile(File file){
 		currentFile = file;
+		Session session = sessionFactory.openSession();
 		try{
 			Scanner scan = new Scanner(file);
 			String name = scan.nextLine();
 			scan.close();
-			setWorkingScreen(file.getAbsolutePath());
+			String hql = "FROM org.maryea.billing.model.Business WHERE Business_Name='" + name + "'";
+			Query query = session.createQuery(hql);
+			List<Business> results = query.list();
+			if(results != null){
+				currentBusiness = results.get(0);
+			}
+			
 		}catch(FileNotFoundException f){
 			System.out.println("The file doesn't exist.");
+		}catch(HibernateException h){
+			if(session.getTransaction() != null){
+				session.getTransaction().rollback();
+			}
+			h.printStackTrace();
 		}catch(Exception e){
 			System.out.println("There was an error opening the file.");
 			e.printStackTrace();
+		}finally{
+			session.close();
 		}
+		setWorkingScreen(file.getAbsolutePath());
 	}
 
 	public void quit(){

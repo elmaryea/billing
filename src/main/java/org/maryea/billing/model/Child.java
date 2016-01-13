@@ -12,7 +12,8 @@ public class Child{
   public Child(){
   }
   
-  public Child(String fn, String ln){
+  public Child(String fn, String ln, Account a){
+  	account = a;
   	firstName = fn;
   	lastName = ln;
   	balance = 0.0;

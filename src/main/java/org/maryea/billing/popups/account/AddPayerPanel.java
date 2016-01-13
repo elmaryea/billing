@@ -2,6 +2,8 @@ package org.maryea.billing.popups.account;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -17,7 +19,7 @@ import javax.swing.table.TableColumn;
 
 import org.maryea.billing.model.JTextFieldDigitLimit;
 
-public class AddPayerPanel extends JPanel implements TableModelListener, ActionListener{
+public class AddPayerPanel extends JPanel implements TableModelListener, ActionListener, KeyListener{
 	private static final long serialVersionUID = -3629578543354896633L;
 	private PayerTableModel model;
 	private JButton add, delete, cancel, next, finish;
@@ -26,26 +28,27 @@ public class AddPayerPanel extends JPanel implements TableModelListener, ActionL
 	private JTable table;
 	private JTextField firstName, lastName, homePhoneArea, homePhone3, homePhone4, cellPhoneArea, cellPhone3, cellPhone4;
 	private JTextFieldDigitLimit ha, h3, h4, ca, c3, c4;
+	private boolean hadone = false, h3done = false, cadone = false, c3done = false; 
 	
 	
 	public AddPayerPanel(LinkedList<String> initialAccount){
 		Object[][] input;
-		if(initialAccount.get(2) != null){
+		if(!initialAccount.get(2).equals("")){
 			input = new Object[2][4];
 			input[0][0] = initialAccount.get(0);
 			input[0][1] = initialAccount.get(1);
-			input[0][2] = initialAccount.get(4);//home
-			input[0][3] = initialAccount.get(5);//cell
+			input[0][2] = initialAccount.get(8);//home
+			input[0][3] = initialAccount.get(9);//cell
 			input[1][0] = initialAccount.get(2);
 			input[1][1] = initialAccount.get(3);
-			input[1][2] = initialAccount.get(4);//home
-			input[1][3] = initialAccount.get(5);//cell
+			input[1][2] = initialAccount.get(8);//home
+			input[1][3] = initialAccount.get(9);//cell
 		}else{
 			input = new Object[1][4];
 			input[0][0] = initialAccount.get(0);
 			input[0][1] = initialAccount.get(1);
-			input[0][2] = initialAccount.get(4);//home
-			input[0][3] = initialAccount.get(5);//cell
+			input[0][2] = initialAccount.get(8);//home
+			input[0][3] = initialAccount.get(9);//cell
 		}
 		Object[] columns = {"First Name", "Last Name", "Home Phone", "Cell Phone"};
 		model = new PayerTableModel(input, columns);
@@ -99,6 +102,11 @@ public class AddPayerPanel extends JPanel implements TableModelListener, ActionL
 		cellPhoneArea.setDocument(ca);
 		cellPhone3.setDocument(c3);
 		cellPhone4.setDocument(c4);
+		
+		homePhoneArea.addKeyListener(this);
+		homePhone3.addKeyListener(this);
+		cellPhoneArea.addKeyListener(this);
+		cellPhone3.addKeyListener(this);
 		
 		add(header);
 		add(fn);
@@ -160,5 +168,38 @@ public class AddPayerPanel extends JPanel implements TableModelListener, ActionL
 	}
 
 	public void tableChanged(TableModelEvent e) {
+	}
+
+	public void keyTyped(KeyEvent e) {
+		if(e.getSource().equals(homePhoneArea)){
+			if(homePhoneArea.getCaretPosition() == 2 && !hadone){
+				homePhone3.requestFocus();
+				homePhone3.setCaretPosition(0);
+				hadone = true;
+			}
+		}else if(e.getSource().equals(homePhone3)){
+			if(homePhone3.getCaretPosition() == 2 && !h3done){
+				homePhone4.requestFocus();
+				homePhone4.setCaretPosition(0);
+				h3done = true;
+			}
+		}else if(e.getSource().equals(cellPhoneArea)){
+			if(cellPhoneArea.getCaretPosition() == 2 && !cadone){
+				cellPhone3.requestFocus();
+				cellPhone3.setCaretPosition(0);
+				cadone = true;
+			}
+		}else if(e.getSource().equals(cellPhone3)){
+			if(cellPhone3.getCaretPosition() == 2 && !c3done){
+				cellPhone4.requestFocus();
+				cellPhone4.setCaretPosition(0);
+				c3done = true;
+			}
+		}
+	}
+
+	public void keyPressed(KeyEvent e) {
+	}
+	public void keyReleased(KeyEvent e) {
 	}
 }
