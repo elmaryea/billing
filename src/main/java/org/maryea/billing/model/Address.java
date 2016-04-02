@@ -54,4 +54,7 @@ public class Address{
 		this.zipCode = zipCode;
 	}
 	
+	public boolean equals(Address a){
+		return a.getAddress()==address && a.getCity()==city && a.getState()==state && a.getZipCode()==zipCode;
+	}
 }

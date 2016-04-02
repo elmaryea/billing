@@ -27,6 +27,19 @@ public class Account{
     	business = b;
     }
     
+    public Account(Account a){
+    	id = a.getId();
+    	firstName1 = a.getFirstName1();
+    	lastName1 = a.getLastName1();
+    	firstName2 = a.getFirstName2();
+    	lastName2 = a.getLastName2();
+    	homePhone = a.getHomePhone();
+    	cellPhone = a.getCellPhone();
+    	address = a.getAddress();
+    	business = a.getBusiness();
+    	balance = 0.0;
+    }
+    
     public Address getAddress(){
     	return address;
     }

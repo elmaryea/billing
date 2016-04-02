@@ -2,7 +2,7 @@ package org.maryea.billing.model;
 
 import java.util.Set;
 
-public class Child{
+public class Child implements Comparable<Object>{
   private int id;
   private String firstName, lastName;
   private double balance;
@@ -65,5 +65,22 @@ public class Child{
   
   public void setPayments(Set<Payment> payments){
   	this.payments = payments;
+  }
+  
+  @Override
+  public boolean equals(Object o){
+	  Child c = (Child)o;
+	  return c.getBalance()==balance && c.getFirstName()==firstName && c.getLastName()==lastName;
+  }
+  
+  @Override
+  public int compareTo(Object o) {
+	if(equals(o)){
+	  return 0;
+	}else if(((Child)o).getId() < id){
+		return 1;
+	}else{
+		return -1;
+	}
   }
 }
