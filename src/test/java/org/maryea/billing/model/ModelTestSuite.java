@@ -11,7 +11,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	AccountTest.class,
 	AddressTest.class,
-	BusinessTest.class
+	BusinessTest.class,
+	ChildTest.class
 })
 public class ModelTestSuite {
 	public static void main(String[] args){
