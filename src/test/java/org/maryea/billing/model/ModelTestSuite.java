@@ -9,7 +9,9 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	AccountTest.class
+	AccountTest.class,
+	AddressTest.class,
+	BusinessTest.class
 })
 public class ModelTestSuite {
 	public static void main(String[] args){
