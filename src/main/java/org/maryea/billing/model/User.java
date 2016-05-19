@@ -9,6 +9,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+/*
+	This class represents a user who is able to login to the application to use it.
+	Each user has an id (for Hibernate), a username, a first and last name, an email
+	address for forgotten passwords, whether the user is currently logged in, and the
+	date of their last password change.
+*/
+
 @Entity
 @Table(name = "users")
 public class User{
@@ -49,6 +56,10 @@ public class User{
 		this.id = id;
 	}
 
+	/*
+		Getter methods for Hibernate
+	*/
+	
 	public String getUsername(){
 		return username;
 	}
@@ -76,6 +87,10 @@ public class User{
 	public boolean getCurrentUser(){
 		return currentUser;
 	}
+	
+	/*
+		Setter methods for Hibernate
+	*/
 	
 	public void setId(int id){
 		this.id = id;
