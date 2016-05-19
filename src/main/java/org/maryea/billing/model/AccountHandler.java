@@ -7,18 +7,32 @@ import org.maryea.billing.popups.account.NewAccountBox;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+/*
+	This is a class of static methods for dealing with program -> database and database -> program
+	connections. Primarily it deals with the account data that is manipulated through use of the program.
+*/
 public class AccountHandler{
 	public static NewAccountBox newAccountBox;
 	
+	/*
+		Initializes the popup window to add an account to the system
+	*/
 	public static void addAccount(BillingWindow bw){
 		newAccountBox = new NewAccountBox(bw);
 	}
 	
+	/*
+		Loads the accounts from the database into memory for program use
+	*/
 	public static Vector<Account> loadAccounts(SessionFactory factory){
 		Vector<Account> accounts = new Vector<Account>();
 		return accounts;
 	}
 	
+	/*
+		Called when a new account is created. This saves the account, the set of children and the set of 
+		payers to the database.
+	*/
 	public static void persistNewAccount(BillingWindow bw, Account account, List<Child> children, List<Payer> payers){
 		/*Account account = newAccountBox.getAccount();
 		List<Child> children = newAccountBox.getChildren();
