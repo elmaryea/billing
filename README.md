@@ -13,6 +13,7 @@ Database Schema:
 - Users (User_ID, Username, First_Name, Last_Name, Email_Address, Last_Pass_Change, Last_Program_Open)
 
 
+
 Payments are a little bit convoluted, so below is a little background about how it is layed out and supposed to work:
 *  Account represents a family. The account supports two parents (first and last names. Although the this could be changed for more than two parents.). Each account also has a set of payers who can be for the account. The parents are automatically added as payers, however others can be added as well (ie. grandparents). Each account account also has a set of children who will be payed for by one or more of the account payers. The account has a total balance which is equal to the sum of the balances of the children.
   
