@@ -2,6 +2,12 @@ package org.maryea.billing.model;
 
 import java.util.Set;
 
+/*
+	This class represents a child care business, which is comprised of the name of 
+	the child care center and a list of accounts for children who are enrolled. There
+	is also an id field that Hibernate needs in order to load an instance of the class
+	from the database.
+*/
 public class Business {
 	private int id;
 	private Set<Account> accounts;
