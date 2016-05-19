@@ -21,13 +21,21 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+/*
+	This is a class of static methods to help with user creation, and modification
+*/
 public class UserHandler{
-	public static String CREDENTIALS = "src/main/resources/credentials.pass";
-	private static String EMAIL_ADDRESS = "billing.donotreply";
-	private static String EMAIL_PASSWORD = "dnrbilling";
-	private static String EMAIL_SUBJECT = "Billing Program Password Reset";
-	private static String EMAIL_BODY = "Your temporary password is ";
+	public static String CREDENTIALS = "src/main/resources/credentials.pass"; // File to store the user credentials (username, password hash)
+	private static String EMAIL_ADDRESS = "billing.donotreply";								// Email address for password resets
+	private static String EMAIL_PASSWORD = "dnrbilling";											// Password for email address
+	private static String EMAIL_SUBJECT = "Billing Program Password Reset";		// Subject for password reset emails
+	private static String EMAIL_BODY = "Your temporary password is ";					// Partial body of password reset email
 
+	/*
+		Allows a user to access a businesses SQL database. Basically this allows them to use the
+		application as their credentials are also used for the Hibernate transactions to the database
+		for an action they perform while they are logged in. This fileName is the name of the business.
+	*/
 	public static void addUserPrivilege(String fileName, String username, SessionFactory factory){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -49,6 +57,12 @@ public class UserHandler{
 		
 	}
 
+	/*
+		This method changes a user's password. The method takes the username and the hash of the password.
+		The file that currently holds the credentials is read and each username, hash is written to the new
+		file with the changed username and hash. The old file is then deleted and the new one is renamed to
+		same as the old one. It's a little hacky, but it works.
+	*/
 	public static void changePassword(String username, String hash){
 		Scanner fileScan, lineScan;
 		String line, user;
@@ -82,6 +96,9 @@ public class UserHandler{
 		}
 	}
 
+	/*
+		This method writes the new user credentials to the credentials file
+	*/
 	public static void createAccount(String username, String hash){
 		try{
 			FileWriter out = new FileWriter(new File(CREDENTIALS), true);
@@ -93,6 +110,11 @@ public class UserHandler{
 		}
 	}
 
+	/*
+		This method adds to, or creates and adds to, a check file of type .cred that contains a list of 
+		databases the user has access to. In reality these are actually businesses that the user has access
+		to and they aren't separate databases in the MySQL server.
+	*/
 	public static void createCheckFile(String username, String dbName){
 		File checkFile = new File("src/main/resources/" + username + ".cred");
 		if(!checkFile.exists()){
@@ -115,6 +137,11 @@ public class UserHandler{
 		}
 	}
 
+	/*
+		This method creates a new entry in the businesses table for a new business. In addition
+		the user with username will be added to the User_Business table so it has access to the
+		new business.
+	*/
 	public static String createDatabase(SessionFactory factory, String username, String dbName){
 		String db = newDBName(factory, dbName.replaceAll("\\s", ""));
 		Session session = factory.openSession();
@@ -140,6 +167,11 @@ public class UserHandler{
 		return db;
 	}
 
+	/*
+		This creates a file for the business of type .bil. In unix/linux/mac systems this
+		file is created in the ~/ folder. In Windows systems the file is created in 
+		C:\Users\username\Documents\.
+	*/
 	public static void createMainFile(String businessName, String os){
 		File mainFile;
 		if(os.indexOf("win") >= 0){
@@ -167,6 +199,9 @@ public class UserHandler{
 		}
 	}
 
+	/*
+		Adds a user the Users table in the database.
+	*/
 	public static String createSQLEntry(SessionFactory factory, String username, String hash, String firstName, String lastName, String businessName, String emailAddress){
 		Session session = factory.openSession();
 		Transaction tx = null;
@@ -195,6 +230,10 @@ public class UserHandler{
 		return db;
 	}
 
+	/*
+		This methods checks if the testName is in the Businesses table such that there is a user who has
+		access to it.
+	*/
 	public static boolean dbExists(SessionFactory factory, String testName){
 		boolean ret = false;
 		org.hibernate.Session session = factory.openSession();
@@ -218,6 +257,9 @@ public class UserHandler{
 		return ret;
 	}
 
+	/*
+		This method gets a list of users from the Users table in the database
+	*/
 	public static List<User> loadUsers(SessionFactory factory){
 		org.hibernate.Session session = factory.openSession();
 		Transaction tx = null;
@@ -237,6 +279,12 @@ public class UserHandler{
 		return null;
 	}
 
+	/*
+		While the businesses table contains a business with the current name, 
+		an incremented integer is added to the name, until it isn't found
+		in the database. This ensure that unique business names, and therefore
+		files, are created.
+	*/
 	public static String newDBName(SessionFactory factory, String bName){
 		String newName = bName;
 		int count = 1;
@@ -247,6 +295,10 @@ public class UserHandler{
 		return newName;
 	}
 
+	/*
+		Creates a random password for a user who wants reset their password (and forgot
+		the current one) and calls the sendResetEmail method
+	*/
 	public static void resetPassword(List<User> users, String username){
 		SecureRandom random = new SecureRandom();
 		String tempPassword = new BigInteger(130, random).toString(15);
@@ -265,6 +317,10 @@ public class UserHandler{
 		}
 	}
 
+	/*
+		Sends an email to the email on file for the user, containing a temporary password
+		with which they can use to login and then change their password
+	*/
 	public static void sendResetEmail(String email, String tempPassword){
 		Properties props = System.getProperties();
 	    String host = "smtp.gmail.com";
@@ -299,6 +355,11 @@ public class UserHandler{
 	    }
 	}
 	
+	/*
+		Adds a business to the check file of username so that they have access
+		to that business when they log in. Only users who already have access to 
+		the business can't grant access to users who don't.
+	*/
 	public static void updateCheckFile(String fileName, String username){
 		File checkFile = new File("src/main/resources/" + username + ".cred");
 		if(!checkFile.exists()){
@@ -321,6 +382,9 @@ public class UserHandler{
 		}
 	}
 
+	/*
+		checks if the username currently exists in the credentials file
+	*/
 	public static boolean userExists(String username){
 		File file = new File(CREDENTIALS);
 		String line;
@@ -341,6 +405,14 @@ public class UserHandler{
 		return false;
 	}
 
+	/*
+		Checks if the username exists in the credentials file.Checks
+		
+		NOTE: I think this is a duplicate of the above method userExists,
+		but I haven't checked if it is in use elsewhere yet.
+		TODO: check if usernameExists is used elsewhere in the program
+	*/
+	
 	public static boolean usernameExists(String username){
 		try{
 			Scanner scanFile = new Scanner(new File(CREDENTIALS));
@@ -364,6 +436,9 @@ public class UserHandler{
 		return false;
 	}
 
+	/*
+		Checks if the password that the user typed to login matches the password that is on file.
+	*/
 	public static boolean verifyPassword(char[] password, String username){
 		try{
 			Scanner fileScan, lineScan;
