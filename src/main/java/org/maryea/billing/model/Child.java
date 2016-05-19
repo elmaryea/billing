@@ -2,6 +2,13 @@ package org.maryea.billing.model;
 
 import java.util.Set;
 
+/*
+	This class represents a child that is currently enrolled int the child care program.
+	Each child has an id (need for hibernate to create an instance from the database), a
+	first and last name, the balance for them (which is added to the balance for the Account
+	they are under), a set of payments made for that child (which are added to the set of payments
+	made for the Account they are under), and the Account they are associated with.
+*/
 public class Child implements Comparable<Object>{
   private int id;
   private String firstName, lastName;
@@ -19,6 +26,10 @@ public class Child implements Comparable<Object>{
   	balance = 0.0;
   }
   
+	/*
+		Getter methods for hibernate to use	
+	*/
+	
   public Account getAccount(){
   	return account;
   }
@@ -43,6 +54,10 @@ public class Child implements Comparable<Object>{
   	return payments;
   }
   
+	/*
+		Setter methods for Hibernate to use
+	*/
+	
   public void setAccount(Account account){
   	this.account = account;
   }
