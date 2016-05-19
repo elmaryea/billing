@@ -1,5 +1,8 @@
 package org.maryea.billing.model;
 
+/*
+	This is a simple class to store the fields of an address.
+*/
 public class Address{
 	private int id;
 	private String address, city, state, zipCode;
