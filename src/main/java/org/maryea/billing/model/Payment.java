@@ -3,6 +3,14 @@ package org.maryea.billing.model;
 import java.util.Date;
 import java.util.Set;
 
+/*
+  This class represents a payment. Sets of payments are formed for Accounts, Payers and Children.
+  Each payment has an id (for Hibernate to use for the database), a check number if the payment was
+  by check, the date the payment was made, the resulting balance after the payment, a boolean representing
+  whether or not the payment was made in cash or by check, the Account associated withe the payments,
+  the Payer who made the payment, and the child the payment was made for.
+*/
+
 public class Payment{
   public static final boolean CASH = false;
   public static final boolean CHECK = true;
@@ -19,6 +27,9 @@ public class Payment{
   public Payment(){
   }
   
+  /*
+    Getter methods for Hibernate to use
+  */
   public Account getAccount(){
   	return account;
   }
@@ -58,6 +69,10 @@ public class Payment{
   public Set<Payment> getPayments(){
   	return payments;
   }
+  
+  /*
+    Setter methods for Hibernate to use
+  */
   
   public void setAccount(Account account){
   	this.account = account;
