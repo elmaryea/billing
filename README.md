@@ -20,7 +20,8 @@ Payments are a little bit convoluted, so below is a little background about how 
   changed for more than two parents.). Each account also has a set of payers who can be for the account. The parents
   are automatically added as payers, however others can be added as well (ie. grandparents). Each account account also
   has a set of children who will be payed for by one or more of the account payers. The account has a total balance
-  which is equal to the sum of the balances of the children.which
+  which is equal to the sum of the balances of the children.
+  
 > When a payment is made by a payer a few things happen. If there is only one child, then the payment is added to the
   payments table with the relevent account, payer and child information. This happens regarless of whether the account 
   balance is being paid in full. If there is more than one child, a few things could happen. If the account balance is
